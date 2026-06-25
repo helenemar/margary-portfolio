@@ -4,8 +4,15 @@ export default function ProjectCard({ project, onOpen }) {
       className="w-[340px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col cursor-pointer transition-shadow hover:shadow-lg"
       onClick={onOpen}
     >
-      {/* Accent bar */}
-      <div className="h-2" style={{ backgroundColor: project.accent }} />
+      {project.cover ? (
+        <img
+          src={project.cover}
+          alt={project.title}
+          className="w-full aspect-video object-cover"
+        />
+      ) : (
+        <div className="h-2" style={{ backgroundColor: project.accent }} />
+      )}
 
       <div className="p-6 flex flex-col gap-4">
         <h3 className="font-fraunces font-bold text-xl text-stone-900 leading-snug">

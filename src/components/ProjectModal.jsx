@@ -1,11 +1,5 @@
 import { useEffect } from "react"
 
-const PLACEHOLDERS = [
-  "Vue d'ensemble",
-  "Détail de l'interface",
-  "Composants clés",
-]
-
 export default function ProjectModal({ project, onClose }) {
   useEffect(() => {
     const onKey = (e) => {
@@ -64,17 +58,23 @@ export default function ProjectModal({ project, onClose }) {
             {project.description}
           </p>
 
-          {/* Image placeholders */}
-          <div className="flex flex-col gap-3">
-            {PLACEHOLDERS.map((label) => (
-              <div key={label} className="flex flex-col gap-1.5">
-                <div className="w-full h-48 bg-stone-100 rounded-xl" />
-                <span className="font-inter text-xs text-stone-400 pl-1">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
+          {/* Gallery (only if project has images) */}
+          {project.gallery && (
+            <div className="flex flex-col gap-4">
+              {project.gallery.map((img) => (
+                <figure key={img.caption} className="m-0 flex flex-col gap-1.5">
+                  <img
+                    src={img.src}
+                    alt={img.caption}
+                    className="w-full rounded-xl"
+                  />
+                  <figcaption className="font-inter text-xs text-stone-400 pl-1">
+                    {img.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
