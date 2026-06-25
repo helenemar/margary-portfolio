@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react"
 import projects from "../data/projects"
 import ProjectCard from "./ProjectCard"
+import ProjectModal from "./ProjectModal"
 
 const MIN_ZOOM = 0.3
 const MAX_ZOOM = 2.5
@@ -13,6 +14,7 @@ function clamp(value, min, max) {
 
 export default function Canvas() {
   const [camera, setCamera] = useState({ x: 0, y: 0, zoom: 1 })
+  const [openProject, setOpenProject] = useState(null)
   const dragRef = useRef(null)
 
   // --- Pan (click-drag on background) ---
@@ -87,59 +89,72 @@ export default function Canvas() {
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-cream overflow-hidden select-none"
-      style={{ cursor: dragRef.current ? "grabbing" : "grab", ...gridStyle }}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onWheel={onWheel}
-    >
-      {/* Transformed layer — everything on the canvas lives here */}
+    <>
       <div
-        style={{
-          transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`,
-          transformOrigin: "0 0",
-        }}
+        className="fixed inset-0 bg-cream overflow-hidden select-none"
+        style={{ cursor: dragRef.current ? "grabbing" : "grab", ...gridStyle }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onWheel={onWheel}
       >
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className="absolute"
-            style={{ left: project.x, top: project.y }}
+        {/* Transformed layer — everything on the canvas lives here */}
+        <div
+          style={{
+            transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`,
+            transformOrigin: "0 0",
+          }}
+        >
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              className="absolute"
+              style={{ left: project.x, top: project.y }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <ProjectCard
+                project={project}
+                onOpen={() => setOpenProject(project)}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Controls — z-50 + stopPropagation to stay above canvas and block pan */}
+        <div
+          className="absolute bottom-6 left-6 z-50 flex items-center gap-2"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => zoomBy(-ZOOM_STEP)}
+            className="w-9 h-9 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-700 font-mono text-lg flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
           >
-            <ProjectCard project={project} />
-          </div>
-        ))}
+            −
+          </button>
+          <span className="font-mono text-sm text-stone-500 w-14 text-center select-none">
+            {Math.round(camera.zoom * 100)}%
+          </span>
+          <button
+            onClick={() => zoomBy(ZOOM_STEP)}
+            className="w-9 h-9 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-700 font-mono text-lg flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
+          >
+            +
+          </button>
+          <button
+            onClick={reset}
+            className="ml-1 h-9 px-3 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-600 font-inter text-sm hover:bg-white transition-colors cursor-pointer"
+          >
+            Recentrer
+          </button>
+        </div>
       </div>
 
-      {/* Controls — z-50 + stopPropagation to stay above canvas and block pan */}
-      <div
-        className="absolute bottom-6 left-6 z-50 flex items-center gap-2"
-        onPointerDown={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={() => zoomBy(-ZOOM_STEP)}
-          className="w-9 h-9 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-700 font-mono text-lg flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
-        >
-          −
-        </button>
-        <span className="font-mono text-sm text-stone-500 w-14 text-center select-none">
-          {Math.round(camera.zoom * 100)}%
-        </span>
-        <button
-          onClick={() => zoomBy(ZOOM_STEP)}
-          className="w-9 h-9 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-700 font-mono text-lg flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
-        >
-          +
-        </button>
-        <button
-          onClick={reset}
-          className="ml-1 h-9 px-3 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-600 font-inter text-sm hover:bg-white transition-colors cursor-pointer"
-        >
-          Recentrer
-        </button>
-      </div>
-    </div>
+      {openProject && (
+        <ProjectModal
+          project={openProject}
+          onClose={() => setOpenProject(null)}
+        />
+      )}
+    </>
   )
 }

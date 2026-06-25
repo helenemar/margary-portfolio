@@ -1,6 +1,9 @@
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project, onOpen }) {
   return (
-    <div className="w-[340px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
+    <div
+      className="w-[340px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col cursor-pointer transition-shadow hover:shadow-lg"
+      onClick={onOpen}
+    >
       {/* Accent bar */}
       <div className="h-2" style={{ backgroundColor: project.accent }} />
 
