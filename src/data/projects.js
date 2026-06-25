@@ -16,7 +16,8 @@ const projects = [
     tags: ["Product Design", "SaaS", "Vibe coding"],
     x: 60,
     y: 60,
-    accent: "#A3785B",
+    accent: "#A259FF",
+    label: "Genogy · SaaS · génogrammes cliniques",
     role: "Product designer en solo : recherche, UX, UI et design system, puis conçu et vibe codé avec Claude Code et Figma.",
     description:
       "Genogy est un SaaS pour créer des génogrammes cliniques : un éditeur canvas, des fiches membres, et un design system complet. J'ai porté le produit du concept jusqu'au MVP cliquable, toute seule.",
@@ -36,7 +37,8 @@ const projects = [
     tags: ["Product Design", "SaaS", "IA"],
     x: 520,
     y: 60,
-    accent: "#6B8F7B",
+    accent: "#0ACF83",
+    label: "Lexia · marketplace & gestion · avocats",
     role: "Product designer en solo, du concept au MVP, avec l'IA dans le workflow.",
     description:
       "Lexia est une plateforme pour avocats : une marketplace publique pour trouver un avocat vérifié, et un back office cabinet avec dossiers, agenda, facturation, plus des relances et des résumés générés par IA.",
@@ -55,8 +57,9 @@ const projects = [
       "Design produit sur des outils internes de recherche, 2024 à 2026.",
     tags: ["Product Design", "Outils internes"],
     x: 60,
-    y: 520,
-    accent: "#7B6B8F",
+    y: 600,
+    accent: "#F24E1E",
+    label: "L'Oréal · R&I · 2024 à 2026",
     role: "Design produit sur des outils internes de recherche et innovation.",
     description:
       "Conception d'interfaces métier pour les équipes R&I, de la recherche utilisateur jusqu'aux maquettes haute fidélité. 2024 à 2026.",
@@ -67,8 +70,9 @@ const projects = [
     tagline: "Design produit sur des interfaces métier, 2024 à 2025.",
     tags: ["Product Design", "UX"],
     x: 520,
-    y: 520,
-    accent: "#5B7B8F",
+    y: 600,
+    accent: "#1ABCFE",
+    label: "Stellantis · 2024 à 2025",
     role: "Design produit sur des interfaces métier.",
     description:
       "Conception et amélioration d'outils internes, basse puis haute fidélité. 2024 à 2025.",

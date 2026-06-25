@@ -3,10 +3,10 @@ import projects from "../data/projects"
 import ProjectCard from "./ProjectCard"
 import ProjectModal from "./ProjectModal"
 
-const MIN_ZOOM = 0.3
-const MAX_ZOOM = 2.5
-const ZOOM_STEP = 0.1
-const WHEEL_FACTOR = 0.001
+const MIN_ZOOM = 0.18
+const MAX_ZOOM = 2.6
+const ZOOM_STEP = 0.15
+const WHEEL_FACTOR = 0.0016
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
@@ -17,7 +17,6 @@ export default function Canvas() {
   const [openProject, setOpenProject] = useState(null)
   const dragRef = useRef(null)
 
-  // --- Pan (click-drag on background) ---
   const onPointerDown = useCallback(
     (e) => {
       if (e.button !== 0) return
@@ -39,20 +38,17 @@ export default function Canvas() {
     dragRef.current = null
   }, [])
 
-  // --- Zoom (wheel, centered on cursor) ---
   const onWheel = useCallback((e) => {
     e.preventDefault()
-    // Read DOM values before the updater — e.currentTarget is nulled after the handler
     const rect = e.currentTarget.getBoundingClientRect()
     const cx = e.clientX - rect.left
     const cy = e.clientY - rect.top
     const deltaY = e.deltaY
 
     setCamera((cam) => {
-      const delta = -deltaY * WHEEL_FACTOR
-      const newZoom = clamp(cam.zoom + delta * cam.zoom, MIN_ZOOM, MAX_ZOOM)
+      const f = Math.exp(-deltaY * WHEEL_FACTOR)
+      const newZoom = clamp(cam.zoom * f, MIN_ZOOM, MAX_ZOOM)
       const ratio = newZoom / cam.zoom
-
       return {
         zoom: newZoom,
         x: cx - (cx - cam.x) * ratio,
@@ -61,12 +57,10 @@ export default function Canvas() {
     })
   }, [])
 
-  // --- Button controls ---
-  const zoomBy = (delta) => {
+  const zoomBy = (dir) => {
     setCamera((cam) => {
-      const newZoom = clamp(cam.zoom + delta, MIN_ZOOM, MAX_ZOOM)
+      const newZoom = clamp(cam.zoom * (dir > 0 ? 1.25 : 0.8), MIN_ZOOM, MAX_ZOOM)
       const ratio = newZoom / cam.zoom
-      // Zoom centered on viewport center
       const vcx = window.innerWidth / 2
       const vcy = window.innerHeight / 2
       return {
@@ -79,11 +73,9 @@ export default function Canvas() {
 
   const reset = () => setCamera({ x: 0, y: 0, zoom: 1 })
 
-  // Dot grid: repeating radial-gradient that moves/scales with the camera
-  const dotSize = 1.2 * camera.zoom
-  const gap = 28 * camera.zoom
+  const gap = 30 * camera.zoom
   const gridStyle = {
-    backgroundImage: `radial-gradient(circle, #b8b3a8 ${dotSize}px, transparent ${dotSize}px)`,
+    backgroundImage: `radial-gradient(var(--color-dot) ${1 * camera.zoom}px, transparent ${1.4 * camera.zoom}px)`,
     backgroundSize: `${gap}px ${gap}px`,
     backgroundPosition: `${camera.x % gap}px ${camera.y % gap}px`,
   }
@@ -91,15 +83,15 @@ export default function Canvas() {
   return (
     <>
       <div
-        className="fixed inset-0 bg-cream overflow-hidden select-none"
+        className="fixed inset-0 bg-bg overflow-hidden select-none"
         style={{ cursor: dragRef.current ? "grabbing" : "grab", ...gridStyle }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onWheel={onWheel}
       >
-        {/* Transformed layer — everything on the canvas lives here */}
         <div
+          className="absolute top-0 left-0 will-change-transform"
           style={{
             transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`,
             transformOrigin: "0 0",
@@ -120,31 +112,26 @@ export default function Canvas() {
           ))}
         </div>
 
-        {/* Controls — z-50 + stopPropagation to stay above canvas and block pan */}
+        {/* Zoom controls — reference style */}
         <div
-          className="absolute bottom-6 left-6 z-50 flex items-center gap-2"
+          className="fixed left-4 bottom-4 z-[60] flex items-center gap-0.5 rounded-[11px] border border-hair backdrop-blur-[12px] p-1"
+          style={{ background: "color-mix(in srgb, var(--color-surface) 80%, transparent)" }}
           onPointerDown={(e) => e.stopPropagation()}
         >
           <button
-            onClick={() => zoomBy(-ZOOM_STEP)}
-            className="w-9 h-9 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-700 font-mono text-lg flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
+            onClick={() => zoomBy(-1)}
+            className="w-[34px] h-[30px] rounded-lg text-txt text-base flex items-center justify-center cursor-pointer hover:bg-txt/10 transition-colors"
           >
             −
           </button>
-          <span className="font-mono text-sm text-stone-500 w-14 text-center select-none">
+          <span className="font-mono text-xs text-muted min-w-[50px] text-center select-none">
             {Math.round(camera.zoom * 100)}%
           </span>
           <button
-            onClick={() => zoomBy(ZOOM_STEP)}
-            className="w-9 h-9 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-700 font-mono text-lg flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
+            onClick={() => zoomBy(1)}
+            className="w-[34px] h-[30px] rounded-lg text-txt text-base flex items-center justify-center cursor-pointer hover:bg-txt/10 transition-colors"
           >
             +
-          </button>
-          <button
-            onClick={reset}
-            className="ml-1 h-9 px-3 rounded-lg bg-white/80 backdrop-blur border border-stone-300 text-stone-600 font-inter text-sm hover:bg-white transition-colors cursor-pointer"
-          >
-            Recentrer
           </button>
         </div>
       </div>
