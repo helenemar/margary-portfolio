@@ -2847,6 +2847,34 @@ export default function App() {
         })
       })
       document.body.appendChild(dock)
+
+      // ===== MOBILE FAB (replaces dock on ≤768px) =====
+      var fab = document.createElement("button")
+      fab.className = "mob-fab"
+      fab.textContent = "🎵"
+      fab.setAttribute("aria-label", "Ouvrir le menu widgets")
+      var fabMenu = document.createElement("div")
+      fabMenu.className = "mob-fab-menu"
+      var fabItems = [
+        { icon: "🎵", label: "Musique", fn: function () { makeWin("music", "🎵", "Lecteur lofi", buildMusic, { w: 300, lw: 380 }) } },
+        { icon: "🎾", label: "Tennis", fn: function () { makeWin("tennis", "🎾", "Mini tennis", buildTennis, { w: 380, lw: 520 }) } },
+        { icon: "🍳", label: "Recettes", fn: function () { makeWin("reci", "🍳", "Recette surprise", buildRecettes, { w: 300, lw: 360 }) } }
+      ]
+      fabItems.forEach(function (it) {
+        var row = document.createElement("button")
+        row.className = "mob-fab-item"
+        row.innerHTML = '<span class="mob-fab-ic">' + it.icon + '</span><span>' + it.label + '</span>'
+        row.onclick = function () { fabMenu.classList.remove("open"); it.fn() }
+        fabMenu.appendChild(row)
+      })
+      fab.onclick = function (e) {
+        e.stopPropagation()
+        fabMenu.classList.toggle("open")
+      }
+      document.addEventListener("click", function () { fabMenu.classList.remove("open") })
+      fabMenu.addEventListener("click", function (e) { e.stopPropagation() })
+      document.body.appendChild(fab)
+      document.body.appendChild(fabMenu)
     })()
   }, [])
 

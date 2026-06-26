@@ -246,10 +246,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .pin{display:none}
 .dims{display:none}
 .frame{animation:none!important}
-.sw-dock{position:fixed;right:auto;left:50%;top:auto;bottom:env(safe-area-inset-bottom,8px);transform:translateX(-50%);flex-direction:row;gap:2px;background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--hair);border-radius:12px;padding:4px 6px;box-shadow:0 4px 14px -6px var(--shadow)}
-.sw-dock .dkb .dki{width:36px;height:36px;border-radius:10px;font-size:16px;border:none;background:transparent;box-shadow:none}
-.sw-dock .dkb .dkl{display:none}
-.sw-dock .dkb:hover .dki{transform:scale(1.08) translateX(0)}
+.sw-dock{display:none!important}
 #botface{width:44px;height:68px;border-radius:12px}
 #chatbtn .label{right:52px;font-size:10px;padding:5px 9px;border-radius:8px}
 }
@@ -461,3 +458,15 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 /* avatar extra */
 #botface img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
 #bothead img{width:auto;height:100%;object-fit:contain;display:block;pointer-events:none}
+
+/* mobile FAB – hidden on desktop */
+.mob-fab,.mob-fab-menu{display:none}
+@media(max-width:768px){
+.mob-fab{display:flex;align-items:center;justify-content:center;position:fixed;right:10px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:119;width:48px;height:48px;border-radius:50%;border:1px solid var(--hair);background:color-mix(in srgb,var(--elev) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:22px;cursor:pointer;box-shadow:0 8px 24px -8px var(--shadow);touch-action:manipulation;transition:transform .15s}
+.mob-fab:hover{transform:scale(1.08)}
+.mob-fab-menu{position:fixed;right:10px;bottom:calc(134px + env(safe-area-inset-bottom,0px));z-index:200;background:var(--elev);border:1px solid var(--hair);border-radius:14px;padding:6px;box-shadow:0 20px 50px -14px var(--shadow);flex-direction:column;gap:2px;min-width:160px;opacity:0;pointer-events:none;transform:translateY(8px) scale(.95);transition:opacity .15s,transform .15s}
+.mob-fab-menu.open{display:flex;opacity:1;pointer-events:all;transform:none}
+.mob-fab-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:none;background:transparent;border-radius:10px;font:inherit;font-size:13px;color:var(--text);cursor:pointer;min-height:44px;touch-action:manipulation;transition:background .12s}
+.mob-fab-item:hover{background:color-mix(in srgb,var(--text) 8%,transparent)}
+.mob-fab-ic{font-size:18px;width:24px;text-align:center;flex:none}
+}
