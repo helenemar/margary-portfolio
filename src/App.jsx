@@ -148,7 +148,7 @@ export default function App() {
       })
       frames.push(rec)
       f.addEventListener("click", function (e) {
-        if (panMoved) return
+        if (panMoved || touchMoved) return
         if (o.onOpen && e.target.closest(".pg-btn")) return
         // "Voir le projet" button opens modal, stop here
         if (o.proj && e.target.closest(".pmore")) {
@@ -700,12 +700,12 @@ export default function App() {
       anim = requestAnimationFrame(step)
     }
 
-    // pan
+    // pan (mouse)
     var panning = false,
       panMoved = false,
       lx,
       ly
-    vp.addEventListener("pointerdown", function (e) {
+    vp.addEventListener("mousedown", function (e) {
       if (e.button) return
       panning = true
       panMoved = false
@@ -714,29 +714,90 @@ export default function App() {
       vp.classList.add("grabbing")
       if (anim) cancelAnimationFrame(anim)
     })
-    window.addEventListener(
-      "pointermove",
-      function (e) {
-        if (!panning) return
-        var dx = e.clientX - lx,
-          dy = e.clientY - ly
-        if (Math.abs(dx) + Math.abs(dy) > 4) panMoved = true
-        view.X += dx
-        view.Y += dy
-        lx = e.clientX
-        ly = e.clientY
-        applyView()
-      },
-      { passive: true }
-    )
-    window.addEventListener("pointerup", function () {
+    window.addEventListener("mousemove", function (e) {
+      if (!panning) return
+      var dx = e.clientX - lx,
+        dy = e.clientY - ly
+      if (Math.abs(dx) + Math.abs(dy) > 4) panMoved = true
+      view.X += dx
+      view.Y += dy
+      lx = e.clientX
+      ly = e.clientY
+      applyView()
+    })
+    window.addEventListener("mouseup", function () {
       panning = false
       vp.classList.remove("grabbing")
-      setTimeout(function () {
-        panMoved = false
-      }, 30)
+      setTimeout(function () { panMoved = false }, 30)
     })
-    // zoom wheel
+
+    // touch: pan (1 finger) + pinch-to-zoom (2 fingers)
+    var touches = [], touchPanning = false, touchMoved = false, lastPinchDist = 0
+    function touchDist(t) {
+      var dx = t[0].clientX - t[1].clientX
+      var dy = t[0].clientY - t[1].clientY
+      return Math.sqrt(dx * dx + dy * dy)
+    }
+    function touchMid(t) {
+      return { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 }
+    }
+    vp.addEventListener("touchstart", function (e) {
+      e.preventDefault()
+      if (anim) cancelAnimationFrame(anim)
+      touches = e.touches
+      touchMoved = false
+      if (touches.length === 1) {
+        touchPanning = true
+        lx = touches[0].clientX
+        ly = touches[0].clientY
+      } else if (touches.length === 2) {
+        touchPanning = false
+        lastPinchDist = touchDist(touches)
+      }
+    }, { passive: false })
+    vp.addEventListener("touchmove", function (e) {
+      e.preventDefault()
+      touches = e.touches
+      if (touches.length === 1 && touchPanning) {
+        var cx = touches[0].clientX, cy = touches[0].clientY
+        var dx = cx - lx, dy = cy - ly
+        if (Math.abs(dx) + Math.abs(dy) > 4) touchMoved = true
+        view.X += dx
+        view.Y += dy
+        lx = cx
+        ly = cy
+        applyView()
+      } else if (touches.length === 2) {
+        touchMoved = true
+        var d = touchDist(touches)
+        var mid = touchMid(touches)
+        if (lastPinchDist > 0) {
+          var f = d / lastPinchDist
+          var ns = clamp(view.S * f, 0.12, 2.6)
+          view.X = mid.x - ((mid.x - view.X) / view.S) * ns
+          view.Y = mid.y - ((mid.y - view.Y) / view.S) * ns
+          view.S = ns
+          applyView()
+        }
+        lastPinchDist = d
+      }
+    }, { passive: false })
+    vp.addEventListener("touchend", function (e) {
+      e.preventDefault()
+      if (e.touches.length === 0) {
+        touchPanning = false
+        lastPinchDist = 0
+        setTimeout(function () { touchMoved = false }, 30)
+      } else if (e.touches.length === 1) {
+        // went from 2 fingers to 1: restart single-finger pan
+        touchPanning = true
+        lx = e.touches[0].clientX
+        ly = e.touches[0].clientY
+        lastPinchDist = 0
+      }
+    }, { passive: false })
+
+    // zoom wheel (desktop)
     vp.addEventListener(
       "wheel",
       function (e) {
