@@ -587,6 +587,8 @@ export default function App() {
         CU_1 +
         '" alt="Custo"></div><p class="fdesc">Une plateforme B2B pour personnaliser et commander son packaging.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>E-commerce</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
     })
+    // save desktop positions before any mobile reflow
+    saveMobileLayout()
     // pins
     addPin(
       380,
@@ -699,6 +701,82 @@ export default function App() {
       }
       anim = requestAnimationFrame(step)
     }
+
+    // mobile single-column layout
+    var isMobile = innerWidth <= 768
+    var desktopPositions = [] // saved at addFrame time, populated after all frames added
+    function saveMobileLayout() {
+      desktopPositions = frames.map(function (f) { return { x: f.x, y: f.y, w: f.w } })
+    }
+    function mobileLayout() {
+      if (innerWidth > 768) {
+        // restore desktop positions
+        if (desktopPositions.length === frames.length) {
+          frames.forEach(function (f, i) {
+            f.x = desktopPositions[i].x
+            f.y = desktopPositions[i].y
+            f.w = desktopPositions[i].w
+            f.el.style.left = f.x + "px"
+            f.el.style.top = f.y + "px"
+            f.el.style.width = f.w + "px"
+          })
+        }
+        isMobile = false
+        return
+      }
+      isMobile = true
+      // tour order (unique keys only)
+      var mobileOrder = [
+        "moi.txt", "apropos.me", "Genogy", "Lexia", "Skillgrid",
+        "Horsenest", "Custo", "Or\u00e9al", "Stellantis",
+        "freelance.list", "parcours.list", "m\u00e9thode", "playground"
+      ]
+      var ordered = []
+      var used = {}
+      mobileOrder.forEach(function (key) {
+        for (var i = 0; i < frames.length; i++) {
+          if (used[i]) continue
+          var label = frames[i].el.querySelector(".flabel").textContent
+          if (label.indexOf(key) >= 0) {
+            ordered.push(frames[i])
+            used[i] = true
+            break
+          }
+        }
+      })
+      // add any remaining frames not in tour
+      frames.forEach(function (f, i) {
+        if (!used[i]) ordered.push(f)
+      })
+      var fw = Math.min(Math.round(innerWidth * 0.9), 500)
+      var gap = 50
+      var startX = 0
+      var curY = 60
+      ordered.forEach(function (f) {
+        f.x = startX
+        f.w = fw
+        f.el.style.left = f.x + "px"
+        f.el.style.width = f.w + "px"
+        // re-measure height with new width
+        var box = f.el.querySelector(".fbox")
+        box.style.position = "static"
+        box.style.width = fw + "px"
+        var newH = box.offsetHeight
+        box.style.position = ""
+        box.style.width = ""
+        f.h = newH
+        f.el.style.height = newH + "px"
+        f.y = curY
+        f.el.style.top = curY + "px"
+        curY += newH + gap
+      })
+    }
+    // listen for resize/orientation change
+    window.addEventListener("resize", function () {
+      var wasMobile = isMobile
+      mobileLayout()
+      if (isMobile !== wasMobile) fitAll()
+    })
 
     // pan (mouse)
     var panning = false,
@@ -2164,6 +2242,7 @@ export default function App() {
 
       // exit
       setTimeout(function () {
+        mobileLayout()
         fitAll()
         bo.classList.add("boot-exit")
         setTimeout(function () { bo.remove() }, 700)
