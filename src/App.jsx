@@ -732,7 +732,9 @@ export default function App() {
     })
 
     // touch: pan (1 finger) + pinch-to-zoom (2 fingers)
-    var touches = [], touchPanning = false, touchMoved = false, lastPinchDist = 0
+    var touchMoved = false, lastPinchDist = 0
+    var touchStartX = 0, touchStartY = 0, touchStartTime = 0, touchFingers = 0
+    var TAP_DIST = 10, TAP_TIME = 300
     function touchDist(t) {
       var dx = t[0].clientX - t[1].clientX
       var dy = t[0].clientY - t[1].clientY
@@ -742,35 +744,45 @@ export default function App() {
       return { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 }
     }
     vp.addEventListener("touchstart", function (e) {
-      e.preventDefault()
+      // Don't prevent default on elements that need taps (buttons, links)
+      var tag = e.target.tagName
+      var isInteractive = tag === "BUTTON" || tag === "A" || e.target.closest(".pmore") || e.target.closest(".pg-btn")
+      if (!isInteractive) e.preventDefault()
       if (anim) cancelAnimationFrame(anim)
-      touches = e.touches
       touchMoved = false
-      if (touches.length === 1) {
-        touchPanning = true
-        lx = touches[0].clientX
-        ly = touches[0].clientY
-      } else if (touches.length === 2) {
-        touchPanning = false
-        lastPinchDist = touchDist(touches)
+      touchFingers = e.touches.length
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX
+        touchStartY = e.touches[0].clientY
+        touchStartTime = Date.now()
+        lx = touchStartX
+        ly = touchStartY
+      } else if (e.touches.length === 2) {
+        touchMoved = true // 2 fingers = not a tap
+        lastPinchDist = touchDist(e.touches)
       }
     }, { passive: false })
     vp.addEventListener("touchmove", function (e) {
       e.preventDefault()
-      touches = e.touches
-      if (touches.length === 1 && touchPanning) {
-        var cx = touches[0].clientX, cy = touches[0].clientY
-        var dx = cx - lx, dy = cy - ly
-        if (Math.abs(dx) + Math.abs(dy) > 4) touchMoved = true
-        view.X += dx
-        view.Y += dy
+      var t = e.touches
+      if (t.length === 1 && touchFingers === 1) {
+        var cx = t[0].clientX, cy = t[0].clientY
+        var totalDx = cx - touchStartX, totalDy = cy - touchStartY
+        var totalDist = Math.abs(totalDx) + Math.abs(totalDy)
+        // Only mark as moved (pan) if beyond tap threshold
+        if (totalDist > TAP_DIST) {
+          touchMoved = true
+          var dx = cx - lx, dy = cy - ly
+          view.X += dx
+          view.Y += dy
+          applyView()
+        }
         lx = cx
         ly = cy
-        applyView()
-      } else if (touches.length === 2) {
+      } else if (t.length === 2) {
         touchMoved = true
-        var d = touchDist(touches)
-        var mid = touchMid(touches)
+        var d = touchDist(t)
+        var mid = touchMid(t)
         if (lastPinchDist > 0) {
           var f = d / lastPinchDist
           var ns = clamp(view.S * f, 0.12, 2.6)
@@ -783,16 +795,25 @@ export default function App() {
       }
     }, { passive: false })
     vp.addEventListener("touchend", function (e) {
-      e.preventDefault()
       if (e.touches.length === 0) {
-        touchPanning = false
+        var elapsed = Date.now() - touchStartTime
+        var isTap = !touchMoved && touchFingers === 1 && elapsed < TAP_TIME
+        if (isTap) {
+          // Simulate a click at tap position for frame interaction
+          var el = document.elementFromPoint(touchStartX, touchStartY)
+          if (el) el.click()
+        }
         lastPinchDist = 0
-        setTimeout(function () { touchMoved = false }, 30)
+        touchFingers = 0
+        setTimeout(function () { touchMoved = false }, 50)
       } else if (e.touches.length === 1) {
         // went from 2 fingers to 1: restart single-finger pan
-        touchPanning = true
         lx = e.touches[0].clientX
         ly = e.touches[0].clientY
+        touchStartX = lx
+        touchStartY = ly
+        touchStartTime = Date.now()
+        touchFingers = 1
         lastPinchDist = 0
       }
     }, { passive: false })
