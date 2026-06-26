@@ -2871,7 +2871,8 @@ export default function App() {
         <span className="sp"></span>
         <div className="avatars" id="avatars"></div>
         <button className="tbtn solid" id="tourBtn">
-          ▶ visite guidée
+          <span className="tour-full">▶ visite guidée</span>
+          <span className="tour-short">▶ Visite</span>
         </button>
         <button className="tbtn" id="fitBtn">
           ⤢ tout voir
