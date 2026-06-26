@@ -3,18 +3,81 @@ import "./index.css"
 
 // Real asset imports (replace PLACEHOLDERs)
 import G_LAND from "./assets/genogy-1-landing.jpg"
-import G_EDIT from "./assets/genogy-2-editeur.jpg"
-import G_FICHE from "./assets/genogy-3-fiche.jpg"
+import GP_1 from "./assets/genogyplateform1.jpg"
+import GP_2 from "./assets/genogyplateform2.jpg"
+import GP_3 from "./assets/genogyplateform3.jpg"
+import GP_4 from "./assets/genogyplateform4.jpg"
+import GP_5 from "./assets/genogyplateform5.jpg"
+import GP_6 from "./assets/genogyplateform6.jpg"
+import GP_7 from "./assets/genogyplateform7.jpg"
+import GP_8 from "./assets/genogyplateform8.jpg"
+import G_L1 from "./assets/genorylanding1.jpg"
+import G_L2 from "./assets/genorylanding2.jpg"
+import G_L3 from "./assets/genorylanding3.jpg"
+import G_L4 from "./assets/genorylanding4.jpg"
+import G_L5 from "./assets/genorylanding5.jpg"
+import G_L6 from "./assets/genorylanding6.jpg"
+import G_L7 from "./assets/genorylanding7.jpg"
+import G_L8 from "./assets/genorylanding8.jpg"
+import CU_1 from "./assets/custo-1-accueil.png"
+import CU_2 from "./assets/custo-2-catalogue.png"
+import CU_3 from "./assets/custo-3-taille.png"
+import CU_4 from "./assets/custo-4-matiere.png"
+import CU_5 from "./assets/custo-5-tarifs.png"
+import CU_6 from "./assets/custo-6-personnalisation.png"
+import CU_7 from "./assets/custo-7-panier.png"
+import CU_8 from "./assets/custo-8-compte.png"
 import L_LAND from "./assets/lexia-1-marketplace.jpg"
 import L_DASH from "./assets/lexia-2-dashboard.jpg"
 import L_CASE from "./assets/lexia-3-dossier.jpg"
 import L_REL from "./assets/lexia-4-relances.jpg"
-import BOTIMG from "./assets/helene-avatar-3d.png"
+import LOREAL_LOGO from "./assets/LOreal-Logo-1536x869.png"
+import STELLANTIS_LOGO from "./assets/Stellantis.svg"
+import LOFI_SRC from "./assets/lofi-loop.mp3"
+import BOTIMG from "./assets/helene-avatar-full.png"
 import AV from "./assets/helene-photo.jpg"
+import SK_1 from "./assets/skillgrid-1-dashboard.png"
+import SK_2 from "./assets/skillgrid-2-organigramme.png"
+import SK_3 from "./assets/skillgrid-3-profil.png"
+import SK_4 from "./assets/skillgrid-4-matrice.png"
+import SK_5 from "./assets/skillgrid-5-creation-matrice.png"
+import SK_6 from "./assets/skillgrid-6-entretiens.png"
+import SK_7 from "./assets/skillgrid-7-creation-entretien.png"
+import SK_8 from "./assets/skillgrid-8-questions.png"
+import SK_9 from "./assets/skillgrid-9-resume.png"
+import HR_P1 from "./assets/HornestPlateforme1.png"
+import HR_P2 from "./assets/HornestPlateforme2.png"
+import HR_P3 from "./assets/HornestPlateforme3.png"
+import HR_P4 from "./assets/HornestPlateforme4.png"
+import HR_P5 from "./assets/HornestPlateforme5.png"
+import HR_P6 from "./assets/HornestPlateforme6.png"
+import HR_P7 from "./assets/HornestPlateforme7.png"
+import HR_W1 from "./assets/HornestWebSite1.png"
+import HR_W2 from "./assets/HornestWebSite2.png"
+import HR_W4 from "./assets/HornestWebSite4.png"
+import HR_W6 from "./assets/HornestWebSite6.png"
+import HR_W7 from "./assets/HornestWebSite7.png"
+import HR_M1 from "./assets/horsnestmobile1.png"
+import HR_M2 from "./assets/horsnestmobile2.png"
+import HR_M4 from "./assets/horsnestmobile4.png"
+import HR_M5 from "./assets/horsnestmobile5.png"
+import HR_M6 from "./assets/horsnestmobile6.png"
+import HR_M7 from "./assets/horsnestmobile7.png"
+import HR_M8 from "./assets/horsnestmobile8.png"
 
 export default function App() {
   useEffect(() => {
     // ===== INIT VARS =====
+    // Clear dynamic containers (prevents duplicates on HMR)
+    // Replace world node to remove stale event listeners from previous mount
+    var oldWorld = document.getElementById("world")
+    var freshWorld = oldWorld.cloneNode(false)
+    oldWorld.parentNode.replaceChild(freshWorld, oldWorld)
+    document.getElementById("cursors").innerHTML = ""
+    document.getElementById("avatars").innerHTML = ""
+    // Remove stale game windows and dock from previous mount
+    document.querySelectorAll(".window, .sw-dock").forEach(function (el) { el.remove() })
+
     var reduce = matchMedia("(prefers-reduced-motion:reduce)").matches
     var $ = function (s, r) {
       return (r || document).querySelector(s)
@@ -40,31 +103,60 @@ export default function App() {
     var frames = []
     function addFrame(o) {
       var f = document.createElement("div")
-      f.className = "frame"
+      f.className = "frame" + (o.proj ? " frame--clickable" : "")
+      if (o.proj && PROJECTS[o.proj]) f.style.setProperty("--acc", PROJECTS[o.proj].accent)
       f.style.left = o.x + "px"
       f.style.top = o.y + "px"
       f.style.width = o.w + "px"
-      f.style.height = o.h + "px"
       f.innerHTML =
         '<div class="flabel">' +
         o.label +
         '</div><div class="fbox">' +
         o.html +
-        '</div><div class="dims">' +
-        o.w +
-        " \u00d7 " +
-        o.h +
-        "</div>"
+        '</div><div class="dims"></div>'
       world.appendChild(f)
-      var rec = { el: f, x: o.x, y: o.y, w: o.w, h: o.h, onOpen: o.onOpen }
+      // measure real content height
+      var box = f.querySelector(".fbox")
+      box.style.position = "static"
+      box.style.width = o.w + "px"
+      var contentH = box.offsetHeight
+      box.style.position = ""
+      box.style.width = ""
+      var finalH = o.h ? Math.max(o.h, contentH) : contentH
+      f.style.height = finalH + "px"
+      f.querySelector(".dims").textContent = o.w + " \u00d7 " + finalH
+      var rec = { el: f, x: o.x, y: o.y, w: o.w, h: finalH, onOpen: o.onOpen, proj: o.proj || null }
+      // re-measure height after layout settles and images load
+      function recheckH() {
+        box.style.position = "static"
+        box.style.width = o.w + "px"
+        var newH = box.offsetHeight
+        box.style.position = ""
+        box.style.width = ""
+        if (newH > rec.h) {
+          rec.h = newH
+          f.style.height = newH + "px"
+          f.querySelector(".dims").textContent = o.w + " \u00d7 " + newH
+        }
+      }
+      // recheck after next frame (fonts, layout)
+      requestAnimationFrame(function () { requestAnimationFrame(recheckH) })
+      // recheck after images load
+      var imgs = box.querySelectorAll("img")
+      imgs.forEach(function (img) {
+        if (!img.complete) img.addEventListener("load", recheckH)
+      })
       frames.push(rec)
       f.addEventListener("click", function (e) {
         if (panMoved) return
-        if (o.onOpen && e.target.closest(".arcbtn")) return
-        if (o.proj) {
+        if (o.onOpen && e.target.closest(".pg-btn")) return
+        // "Voir le projet" button opens modal, stop here
+        if (o.proj && e.target.closest(".pmore")) {
+          e.stopPropagation()
           openProject(o.proj)
           return
         }
+        // All frames (including projects): zoom to fit
         fitTo(rec)
       })
       return rec
@@ -86,49 +178,143 @@ export default function App() {
     var PROJECTS = {
       genogy: {
         accent: "#8B5CF6",
-        subtitle: "Genogy \u00b7 SaaS \u00b7 g\u00e9nogrammes cliniques",
-        title: "Genogy",
-        role: "Design produit de bout en bout (landing, app, design system, \u00e9diteur canvas), puis vibe cod\u00e9 en solo avec Claude Code + Figma. Pas du dev classique : du vibe coding.",
-        desc: "Genogy permet de cartographier en quelques minutes les liens familiaux, \u00e9motionnels et transg\u00e9n\u00e9rationnels d\u2019un patient, selon les standards McGoldrick. J\u2019ai design\u00e9 tout le produit (le site, l\u2019application, le design system, et un \u00e9diteur canvas riche : zoom, liens \u00e9motionnels, fiches membres, pathologies, export), puis je l\u2019ai rendu fonctionnel en vibe coding, sans \u00e9quipe de dev.",
+        subtitle: "GENOGY \u00b7 SAAS \u00b7 G\u00c9NOGRAMMES CLINIQUES",
+        title: "Genogy, le SaaS de g\u00e9nogrammes",
+        role: "Product designer en solo : recherche, UX, UI et design system, puis construit avec l'IA jusqu'au produit en ligne.",
+        desc: "Genogy aide th\u00e9rapeutes et soignants \u00e0 cr\u00e9er des g\u00e9nogrammes cliniques : \u00e9diteur sur canvas, fiches membres et design system complet. J'ai port\u00e9 le produit de la recherche jusqu'\u00e0 la mise en ligne, seule, en le concevant puis en le construisant avec l'IA.",
         link: "https://genogy-app.com",
-        linkLabel: "genogy-app.com",
+        linkLabel: "Voir le site",
         tags: [
+          "Product Design",
           "SaaS",
-          "UI/UX",
-          "Design System",
-          "\u00c9diteur canvas",
-          "Claude Code",
-          "Figma",
+          "IA builder",
         ],
         shots: [
-          { img: G_LAND, cap: "Landing \u00b7 le pitch produit" },
-          { img: G_EDIT, cap: "\u00c9diteur canvas \u00b7 liens & pathologies" },
-          { img: G_FICHE, cap: "Fiche membre \u00b7 d\u00e9tail clinique" },
+          { section: "Site vitrine" },
+          { img: G_L1, cap: "Landing – Hero" },
+          { img: G_L2, cap: "Landing – Présentation" },
+          { img: G_L3, cap: "Landing – Fonctionnalités" },
+          { img: G_L4, cap: "Landing – Détails" },
+          { img: G_L5, cap: "Landing – Avantages" },
+          { img: G_L6, cap: "Landing – Tarifs" },
+          { img: G_L7, cap: "Landing – Témoignages" },
+          { img: G_L8, cap: "Landing – Footer" },
+          { section: "Plateforme" },
+          { img: GP_1, cap: "Plateforme 1" },
+          { img: GP_2, cap: "Plateforme 2" },
+          { img: GP_3, cap: "Plateforme 3" },
+          { img: GP_4, cap: "Plateforme 4" },
+          { img: GP_5, cap: "Plateforme 5" },
+          { img: GP_6, cap: "Plateforme 6" },
+          { img: GP_7, cap: "Plateforme 7" },
+          { img: GP_8, cap: "Plateforme 8" },
         ],
       },
       lexia: {
         accent: "#1E8E5A",
-        subtitle:
-          "Lexia \u00b7 marketplace & gestion \u00b7 avocats",
-        title: "Lexia",
-        role: "Design produit complet : la marketplace publique et le back office cabinet (dashboard, app, design system), puis vibe cod\u00e9 en solo avec Claude Code + Figma. Pas du dev classique : du vibe coding.",
-        desc: "Lexia a deux faces. C\u00f4t\u00e9 public, une marketplace pour trouver un avocat v\u00e9rifi\u00e9 et r\u00e9server une consultation en quelques clics. C\u00f4t\u00e9 pro, un back office complet pour les cabinets : dossiers, agenda, clients, feuille de temps et facturation conforme, avec en prime des relances de paiement et des r\u00e9sum\u00e9s de dossiers g\u00e9n\u00e9r\u00e9s par IA.",
+        subtitle: "LEXIA \u00b7 LEGALTECH \u00b7 MON PRODUIT",
+        title: "Lexia, le SaaS des avocats",
+        role: "Fondatrice et product designer, seule sur le produit : vision, UX, UI et design system, con\u00e7u et construit avec l'IA.",
+        desc: "Lexia est mon produit, que je fonde et construis en solo. Une marketplace pour trouver un avocat v\u00e9rifi\u00e9 et un espace cabinet avec dossiers, agenda et facturation, enrichi de relances et de r\u00e9sum\u00e9s assist\u00e9s par IA. En construction active.",
+        link: "",
+        linkLabel: "",
+        status: "En construction",
+        tags: [
+          "Product Design",
+          "SaaS",
+          "IA",
+        ],
+        shots: [
+          { img: L_LAND, cap: "Marketplace publique" },
+          { img: L_DASH, cap: "Dashboard cabinet" },
+          { img: L_CASE, cap: "Dossier avec résumé IA" },
+          { img: L_REL, cap: "Relances générées par IA" },
+        ],
+      },
+      skillgrid: {
+        accent: "#0EA5E9",
+        subtitle: "SKILLGRID \u00b7 SAAS RH \u00b7 GESTION DES TALENTS",
+        title: "Skillgrid, piloter les talents",
+        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
+        desc: "Skillgrid centralise le pilotage des talents : organigramme, matrice de comp\u00e9tences, campagnes d'entretiens, suivi des actions et signatures. J'ai con\u00e7u un produit dense, pens\u00e9 pour rester clair et actionnable, de la recherche aux \u00e9crans haute fid\u00e9lit\u00e9.",
         link: "",
         linkLabel: "",
         tags: [
-          "Marketplace",
-          "SaaS",
-          "UI/UX",
+          "Product Design",
+          "UI",
           "Design System",
-          "Dashboard",
-          "IA",
-          "Claude Code",
         ],
         shots: [
-          { img: L_LAND, cap: "Landing \u00b7 la marketplace" },
-          { img: L_DASH, cap: "Tableau de bord (c\u00f4t\u00e9 cabinet)" },
-          { img: L_CASE, cap: "Dossier \u00b7 r\u00e9sum\u00e9 g\u00e9n\u00e9r\u00e9 par IA" },
-          { img: L_REL, cap: "Relances pr\u00e9par\u00e9es par IA" },
+          { img: SK_1, cap: "Tableau de bord RH" },
+          { img: SK_2, cap: "Organigramme" },
+          { img: SK_3, cap: "Fiche collaborateur" },
+          { img: SK_4, cap: "Matrice de compétences" },
+          { img: SK_5, cap: "Création d'une matrice" },
+          { img: SK_6, cap: "Suivi des entretiens" },
+          { img: SK_7, cap: "Création d'un entretien" },
+          { img: SK_8, cap: "Questions de l'entretien" },
+          { img: SK_9, cap: "Résumé d'entretien" },
+        ],
+      },
+      horsenest: {
+        accent: "#4B8B6E",
+        subtitle: "HORSENEST \u00b7 SAAS \u00b7 GESTION \u00c9QUESTRE",
+        title: "Horsenest, g\u00e9rer son \u00e9curie",
+        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
+        desc: "Horsenest r\u00e9unit profils de chevaux, plannings, organisations, r\u00f4les et facturation, du site vitrine jusqu'\u00e0 l'application. J'ai men\u00e9 le design produit de bout en bout, jusqu'\u00e0 un design system complet, en responsive mobile et desktop.",
+        link: "",
+        linkLabel: "",
+        tags: [
+          "Product Design",
+          "UI",
+          "Design System",
+        ],
+        shots: [
+          { section: "Site vitrine" },
+          { img: HR_W1, cap: "Landing" },
+          { img: HR_W2, cap: "Présentation" },
+          { img: HR_W4, cap: "Fonctionnalités" },
+          { img: HR_W6, cap: "Tarifs" },
+          { img: HR_W7, cap: "Footer" },
+          { section: "Application" },
+          { img: HR_P1, cap: "Vue d'ensemble" },
+          { img: HR_P2, cap: "Fonctionnalités" },
+          { img: HR_P3, cap: "Dashboard" },
+          { img: HR_P4, cap: "Organisations et rôles" },
+          { img: HR_P5, cap: "Facturation" },
+          { img: HR_P6, cap: "Page tarifs" },
+          { img: HR_P7, cap: "Création d'organisation" },
+          { img: HR_M1, cap: "Accueil", mobile: true },
+          { img: HR_M2, cap: "Tâches", mobile: true },
+          { img: HR_M4, cap: "Profil cheval", mobile: true },
+          { img: HR_M5, cap: "Planning", mobile: true },
+          { img: HR_M6, cap: "Organisation", mobile: true },
+          { img: HR_M7, cap: "Facturation", mobile: true },
+          { img: HR_M8, cap: "Paramètres", mobile: true },
+        ],
+      },
+      custo: {
+        accent: "#C2772E",
+        subtitle: "CUSTO \u00b7 E-COMMERCE \u00b7 EMBALLAGES PERSONNALIS\u00c9S",
+        title: "Custo, le packaging sur mesure",
+        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
+        desc: "Custo permet de commander des emballages alimentaires personnalis\u00e9s et responsables. J'ai con\u00e7u tout le parcours : du catalogue au configurateur en plusieurs \u00e9tapes, jusqu'\u00e0 un \u00e9diteur de personnalisation en direct, le panier et l'espace client. Pens\u00e9 pour rester simple et guider de l'id\u00e9e \u00e0 la commande.",
+        link: "",
+        linkLabel: "",
+        tags: [
+          "Product Design",
+          "UI",
+          "E-commerce",
+        ],
+        shots: [
+          { img: CU_1, cap: "Accueil et catalogue" },
+          { img: CU_2, cap: "Catalogue produits" },
+          { img: CU_3, cap: "Configurateur, choix de la taille" },
+          { img: CU_4, cap: "Configurateur, choix de la matière" },
+          { img: CU_5, cap: "Tarifs et quantités" },
+          { img: CU_6, cap: "Éditeur de personnalisation" },
+          { img: CU_7, cap: "Panier" },
+          { img: CU_8, cap: "Espace client et commandes" },
         ],
       },
     }
@@ -139,19 +325,48 @@ export default function App() {
       var m = document.getElementById("projModal")
       if (!m) return
       m.style.setProperty("--acc", p.accent || "#0D99FF")
-      var shots = p.shots
-        .map(function (s) {
-          return (
-            '<div class="pm-shot"><img src="' +
-            s.img +
-            '" alt="' +
-            s.cap +
-            '"><div class="pm-cap">' +
-            s.cap +
-            "</div></div>"
-          )
+      var hasSections = p.shots.some(function (s) { return s.section })
+      var shots = ""
+      if (hasSections) {
+        // Build sections: [{name, cards}]
+        var sections = []
+        var cur = null
+        p.shots.forEach(function (s) {
+          if (s.section) {
+            cur = { name: s.section, cards: [], mobile: [] }
+            sections.push(cur)
+            return
+          }
+          if (!cur) { cur = { name: "", cards: [], mobile: [] }; sections.push(cur) }
+          var card = '<div class="pm-shot"><img src="' + s.img + '" alt="' + s.cap + '"><div class="pm-cap">' + s.cap + "</div></div>"
+          if (s.mobile) { cur.mobile.push(card) } else { cur.cards.push(card) }
         })
-        .join("")
+        // Tabs
+        var tabsHtml = '<div class="pm-tabs">'
+        sections.forEach(function (sec, i) {
+          tabsHtml += '<button class="pm-tab' + (i === 0 ? " active" : "") + '" data-tab="' + i + '">' + sec.name + '</button>'
+        })
+        tabsHtml += '</div>'
+        // Panels
+        var panelsHtml = ""
+        sections.forEach(function (sec, i) {
+          var mobileHtml = sec.mobile.length ? '<div class="pm-mobile-grid">' + sec.mobile.join("") + '</div>' : ""
+          panelsHtml += '<div class="pm-tab-panel' + (i === 0 ? " active" : "") + '" data-panel="' + i + '">' + sec.cards.join("") + mobileHtml + '</div>'
+        })
+        shots = tabsHtml + panelsHtml
+      } else {
+        var mobileGroup = []
+        function flushMobile() {
+          if (!mobileGroup.length) return
+          shots += '<div class="pm-mobile-grid">' + mobileGroup.join("") + '</div>'
+          mobileGroup = []
+        }
+        p.shots.forEach(function (s) {
+          var card = '<div class="pm-shot"><img src="' + s.img + '" alt="' + s.cap + '"><div class="pm-cap">' + s.cap + "</div></div>"
+          if (s.mobile) { mobileGroup.push(card) } else { flushMobile(); shots += card }
+        })
+        flushMobile()
+      }
       var tags = p.tags
         .map(function (t) {
           return "<span>" + t + "</span>"
@@ -164,6 +379,9 @@ export default function App() {
           p.linkLabel +
           " \u2197</a>"
         : ""
+      var status = p.status
+        ? '<div class="pm-status">\u{1F6A7} ' + p.status + '</div>'
+        : ""
       m.querySelector(".pm-panel").innerHTML =
         '<div class="pm-head"><div><div class="pm-brand">' +
         p.subtitle +
@@ -171,16 +389,28 @@ export default function App() {
         p.title +
         '</div></div><button class="pm-close" type="button" aria-label="Fermer">\u2715</button></div><div class="pm-body"><div class="pm-role"><b>Mon r\u00f4le :</b> ' +
         p.role +
-        '</div><p class="pm-desc">' +
-        p.desc +
-        '</p><div class="pm-gallery">' +
+        '</div>' +
+        p.desc.split('\n\n').map(function(par) { return '<p class="pm-desc">' + par + '</p>' }).join('') +
+        '<div class="pm-gallery">' +
         shots +
         '</div><div class="pm-tags">' +
         tags +
         "</div>" +
         link +
+        status +
         "</div>"
       m.querySelector(".pm-close").addEventListener("click", closeProject)
+      // Tab switching
+      m.querySelectorAll(".pm-tab").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = btn.getAttribute("data-tab")
+          m.querySelectorAll(".pm-tab").forEach(function (b) { b.classList.remove("active") })
+          m.querySelectorAll(".pm-tab-panel").forEach(function (p) { p.classList.remove("active") })
+          btn.classList.add("active")
+          var panel = m.querySelector('.pm-tab-panel[data-panel="' + idx + '"]')
+          if (panel) panel.classList.add("active")
+        })
+      })
       m.classList.add("show")
       var pl = m.querySelector(".pm-panel")
       if (pl) pl.scrollTop = 0
@@ -193,131 +423,200 @@ export default function App() {
     // Lexia (vrai projet)
     addFrame({
       proj: "lexia",
-      x: -60,
-      y: 760,
+      x: 520,
+      y: 650,
       w: 520,
       h: 540,
-      label: "<b>Lexia</b> \u00b7 marketplace &amp; gestion \u00b7 avocats",
+      label: "<b>Lexia</b> · legaltech · mon produit",
       html:
-        '<div class="pad"><div class="fbrand">Design\u00e9 &amp; vibe cod\u00e9 en solo</div><h3 class="ftitle" style="font-size:1.5rem">Lexia, la plateforme des avocats</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand">MON PRODUIT, DE LA VISION AU PRODUIT</div><h3 class="ftitle" style="font-size:1.5rem">Lexia, le SaaS des avocats</h3><div class="pcover"><img src="' +
         L_LAND +
-        '" alt="Lexia"></div><p class="fdesc">Trouver un avocat en quelques clics, et tout g\u00e9rer c\u00f4t\u00e9 cabinet, avec l\'IA.</p><div class="ftags"><span>Marketplace</span><span>SaaS</span><span>UI/UX</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Lexia"></div><p class="fdesc">Marketplace et gestion de cabinet, avec relances et r\u00e9sum\u00e9s assist\u00e9s par IA.</p><div class="ftags"><span>Product Design</span><span>SaaS</span><span>IA</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
     })
     // intro
     addFrame({
-      x: -560,
-      y: -40,
-      w: 300,
-      h: 200,
+      x: 0,
+      y: 0,
+      w: 320,
       label: "<b>moi.txt</b>",
-      html: '<div class="pad"><div class="fbrand">Product Designer \u00b7 Paris</div><h3 class="ftitle" style="font-size:1.3rem;margin-top:6px">Bienvenue dans mon fichier.</h3><p class="fdesc">\u00c0 toi de jouer : glisse pour te d\u00e9placer, zoome sur une frame. C\'est mon environnement naturel, je t\'y re\u00e7ois avec plaisir.</p></div>',
+      html: '<div class="intro-card"><div class="intro-wave">\u270B</div><div class="intro-badge">Product Designer \u00b7 Paris</div><h3 class="intro-title">Bienvenue dans mon fichier.</h3><p class="intro-desc">\u00c0 toi de jouer\u00a0: glisse pour te d\u00e9placer, zoome sur une frame. C\'est mon environnement naturel, je t\'y re\u00e7ois avec plaisir.</p><div class="intro-keys"><span>\u2190\u2192 glisser</span><span>\u26F1 zoomer</span><span>\u25C9 cliquer</span></div></div>',
     })
     // L'Oréal
     addFrame({
-      x: -120,
-      y: -300,
+      x: 1840,
+      y: 0,
       w: 460,
-      h: 360,
-      label: "<b>L'Or\u00e9al \u00b7 R&I</b> \u00b7 2024 \u00e0 2026",
+      h: 440,
+      label: "<b>L'Or\u00e9al \u00b7 R&I</b>",
       html:
-        '<div class="pad"><div class="fbrand">L\'Or\u00e9al \u00b7 Recherche &amp; Innovation</div><h3 class="ftitle">Outils internes R&amp;I</h3><div class="shot">' +
-        ui("dash") +
-        '</div><p class="fdesc">\u224814 mois. Solutions digitales internes : parcours, interfaces, collaboration devs/PM pour des produits efficaces et centr\u00e9s utilisateur.</p><div class="ftags"><span>Discovery</span><span>UI/UX</span><span>Design System</span><span>Figma</span></div></div>',
+        '<div class="pad" style="--nda-c:#F24E1E"><div class="fbrand"><img src="' + LOREAL_LOGO + '" alt="L\'Or\u00e9al" class="fbrand-inline-logo"> \u00b7 RECHERCHE &amp; INNOVATION</div><h3 class="ftitle">App Store interne R&I</h3>'
+        + '<div class="nda-illus" style="--nda-c:#F24E1E;color:#F24E1E"><img src="' + LOREAL_LOGO + '" alt="L\'Or\u00e9al" class="nda-logo">'
+        + '<svg class="nda-shapes" viewBox="0 0 400 150" fill="none"><rect x="8" y="8" width="70" height="134" rx="8" fill="currentColor" opacity=".10"/><rect x="90" y="8" width="140" height="56" rx="8" fill="currentColor" opacity=".08"/><rect x="90" y="74" width="66" height="68" rx="8" fill="currentColor" opacity=".07"/><rect x="166" y="74" width="66" height="68" rx="8" fill="currentColor" opacity=".09"/><rect x="244" y="8" width="148" height="134" rx="8" fill="currentColor" opacity=".06"/><polyline points="258,120 280,95 310,105 340,80 370,90" stroke="currentColor" stroke-width="2" opacity=".18" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+        + '<div class="nda-impact"><span>3 it\u00e9rations majeures</span><span>Design system groupe</span><span>Recherche utilisateur</span></div>'
+        + '<p class="fdesc" style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:0">Product designer pour les \u00e9quipes Recherche &amp; Innovation.</p>'
+        + '<p class="fdesc" style="font-size:.84rem">J\'ai con\u00e7u un App Store interne qui centralise les outils m\u00e9tier \u00e0 l\'\u00e9chelle du groupe. Trois it\u00e9rations majeures guid\u00e9es par la recherche utilisateur, et un design system renforc\u00e9 pour une coh\u00e9rence durable et un relais fluide vers les \u00e9quipes techniques.</p>'
+        + '<div class="ftags"><span>Product Design</span><span>Design System</span><span>Recherche UX</span></div>'
+        + '<div class="nda-badge">\uD83D\uDD12 Visuels d\u00e9taill\u00e9s sur demande, projet sous NDA</div></div>',
     })
     // Stellantis
     addFrame({
-      x: 520,
-      y: 120,
+      x: 1860,
+      y: 580,
       w: 460,
-      h: 360,
-      label: "<b>Stellantis</b> \u00b7 2024 \u00e0 2025",
+      h: 420,
+      label: "<b>Stellantis</b>",
       html:
-        '<div class="pad"><div class="fbrand">Stellantis \u00b7 Finance &amp; Services</div><h3 class="ftitle">Refonte Finance &amp; Services</h3><div class="shot">' +
-        ui("site") +
-        '</div><p class="fdesc">Refonte du site : utilisabilit\u00e9, identit\u00e9 modernis\u00e9e, exp\u00e9rience client. Parcours, design d\'interface et alignement business.</p><div class="ftags"><span>Refonte UI</span><span>Parcours</span><span>Identit\u00e9</span></div></div>',
+        '<div class="pad" style="--nda-c:#1ABCFE"><div class="fbrand"><img src="' + STELLANTIS_LOGO + '" alt="Stellantis" class="fbrand-inline-logo"> \u00b7 FINANCE &amp; SERVICES</div><h3 class="ftitle">Refonte de MyFinance</h3>'
+        + '<div class="nda-illus" style="--nda-c:#1ABCFE;color:#1ABCFE"><img src="' + STELLANTIS_LOGO + '" alt="Stellantis" class="nda-logo">'
+        + '<svg class="nda-shapes" viewBox="0 0 400 150" fill="none"><rect x="8" y="8" width="384" height="36" rx="6" fill="currentColor" opacity=".07"/><rect x="8" y="54" width="120" height="88" rx="8" fill="currentColor" opacity=".09"/><rect x="140" y="54" width="120" height="88" rx="8" fill="currentColor" opacity=".07"/><rect x="272" y="54" width="120" height="88" rx="8" fill="currentColor" opacity=".10"/><polyline points="22,120 50,100 80,110 110,90" stroke="currentColor" stroke-width="2" opacity=".18" stroke-linecap="round" stroke-linejoin="round"/><polyline points="154,120 182,105 210,115 240,95" stroke="currentColor" stroke-width="2" opacity=".18" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+        + '<div class="nda-impact"><span>Refonte de bout en bout</span><span>Parcours repens\u00e9s</span><span>Coh\u00e9rence d\'interface</span></div>'
+        + '<p class="fdesc" style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:0">Product designer sur la refonte d\'une plateforme de gestion financi\u00e8re.</p>'
+        + '<p class="fdesc" style="font-size:.84rem">J\'ai men\u00e9 la refonte de MyFinance de bout en bout : nouvelle interface des outils financiers, parcours cl\u00e9s repens\u00e9s et coh\u00e9rence renforc\u00e9e, en lien \u00e9troit avec les \u00e9quipes produit.</p>'
+        + '<div class="ftags"><span>Product Design</span><span>UI</span><span>Refonte</span></div>'
+        + '<div class="nda-badge">\uD83D\uDD12 Visuels d\u00e9taill\u00e9s sur demande, projet sous NDA</div></div>',
     })
     // Genogy (vrai projet)
     addFrame({
       proj: "genogy",
-      x: -60,
-      y: 180,
+      x: 500,
+      y: -30,
       w: 520,
       h: 540,
       label:
-        "<b>Genogy</b> \u00b7 SaaS \u00b7 g\u00e9nogrammes cliniques",
+        "<b>Genogy</b> · SaaS · génogrammes cliniques",
       html:
-        '<div class="pad"><div class="fbrand">Design\u00e9 &amp; vibe cod\u00e9 en solo</div><h3 class="ftitle" style="font-size:1.5rem">Genogy, l\'app de g\u00e9nogrammes</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand">DESIGN + CONSTRUCTION DU PRODUIT</div><h3 class="ftitle" style="font-size:1.5rem">Genogy, le SaaS de génogrammes</h3><div class="pcover"><img src="' +
         G_LAND +
-        '" alt="Genogy"></div><p class="fdesc">Cr\u00e9er des g\u00e9nogrammes cliniques en ligne. Design\u00e9 et vibe cod\u00e9 en solo.</p><div class="ftags"><span>SaaS</span><span>UI/UX</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Genogy"></div><p class="fdesc">Un SaaS de g\u00e9nogrammes cliniques, con\u00e7u et construit en solo avec l\'IA.</p><div class="ftags"><span>Product Design</span><span>SaaS</span><span>IA builder</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
     })
     // brands
     addFrame({
-      x: 1080,
-      y: -220,
+      x: 2460,
+      y: 0,
       w: 300,
-      h: 280,
-      label: "<b>confiance.list</b>",
-      html: '<div class="pad"><div class="fbrand">Ils m\'ont fait confiance</div><div class="blist"><div>L\'Or\u00e9al</div><div>Stellantis</div><div>LTZ Group</div></div></div>',
+      label: "<b>freelance.list</b>",
+      html: '<div class="xp-card"><div class="xp-eye">Freelance grands comptes</div><div class="xp-list"><div class="xp-row"><div class="xp-name">L\'Or\u00e9al</div><div class="xp-role">Design system R&I</div></div><div class="xp-row"><div class="xp-name">Stellantis</div><div class="xp-role">UX app concessionnaires</div></div><div class="xp-row"><div class="xp-name">Disney</div><div class="xp-role">Refonte parcours digital</div></div></div><div class="xp-foot">+ de nombreuses missions PME et startups</div></div>',
+    })
+    addFrame({
+      x: 2450,
+      y: 340,
+      w: 300,
+      label: "<b>parcours.list</b>",
+      html: '<div class="xp-card"><div class="xp-eye">Exp\u00e9riences en CDI</div><div class="xp-list"><div class="xp-row"><div class="xp-name">Mazarine</div><div class="xp-role">D\u00e9v front React</div><a href="https://www.mazarine.com/" target="_blank" rel="noopener" class="xp-link">\u2197</a></div><div class="xp-row"><div class="xp-name">Witco</div><div class="xp-role">Product designer</div><a href="https://www.witco.io/" target="_blank" rel="noopener" class="xp-link">\u2197</a></div><div class="xp-row"><div class="xp-name">Pulp</div><div class="xp-role">UI/UX designer</div><a href="https://www.challenges.fr/entreprise/start-up/pulp-le-click-collect-du-cote-des-restaurateurs_755338" target="_blank" rel="noopener" class="xp-link">\u2197</a></div></div></div>',
     })
     // about/interests
     addFrame({
-      x: -560,
-      y: 240,
-      w: 320,
-      h: 430,
+      x: -10,
+      y: 420,
+      w: 340,
       label: "<b>apropos.me</b>",
-      html: '<div class="pad"><div class="fbrand">qui je suis</div><h3 class="ftitle" style="font-size:1.4rem">Je design, je vibe code.</h3><p class="fdesc">Product designer avant tout. Mais je sais vibe coder : je passe de l\'id\u00e9e au MVP cliquable avec l\'IA (Claude Code + Figma), sans \u00e9quipe de dev.</p><div class="meta"><div class="mrow"><span class="gdot"></span><div><b>Dispo</b><br><span class="msub">Freelance, ouverte au CDD, CDI ou autre si le poste est int\u00e9ressant.</span></div></div><div class="mrow"><span class="memo">\uD83D\uDCCD</span><div><b>Paris</b><br><span class="msub">T\u00e9l\u00e9travail, mobile pour les rencontres qui comptent.</span></div></div></div><div class="chips"><span>\uD83C\uDF73 cuisine</span><span>\u2708\uFE0F voyages</span><span>\uD83E\uDD16 IA</span></div><div class="links"><a href="mailto:hln.margary@gmail.com">\u00c9crire \u2709</a><a href="https://www.malt.fr/profile/helenemargary" target="_blank" rel="noopener">Malt \u2197</a></div></div>',
+      html: '<div class="ab-card">'
+        + '<div class="ab-identity"><img class="ab-photo" src="' + AV + '" alt="H\u00e9l\u00e8ne Margary"/><div><div class="ab-name">H\u00e9l\u00e8ne Margary</div><div class="ab-label">Product Designer \u00b7 Paris</div></div></div>'
+        + '<div class="ab-eye">QUI JE SUIS</div>'
+        + '<h3 class="ab-title">Product designer avant tout.</h3>'
+        + '<p class="ab-pitch">Senior en UI, UX, design systems et recherche utilisateur. Je sais aussi construire ce que je con\u00e7ois, avec l\'IA, de l\'id\u00e9e au MVP cliquable. Designer d\'abord, IA builder en bonus.</p>'
+        + '<div class="ab-infos">'
+        + '<div class="ab-info"><span class="ab-dot"></span><div><b>Dispo</b><span class="ab-detail">Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance, si le projet est int\u00e9ressant.</span></div></div>'
+        + '<div class="ab-info"><span class="ab-pin">\uD83D\uDCCD</span><div><b>Paris</b><span class="ab-detail">T\u00e9l\u00e9travail ou hybride (j\'ai un petit chien \u00e0 la maison \uD83D\uDC36).</span></div></div>'
+        + '</div>'
+        + '<div class="ab-chips"><span>\uD83C\uDF73 cuisine</span><span>\u2708\uFE0F voyages</span><span>\uD83E\uDD16 IA</span></div>'
+        + '<div class="ab-actions"><a class="ab-primary" href="mailto:hln.margary@gmail.com">\u00c9crire \u2709</a><a class="ab-secondary" href="https://www.malt.fr/profile/helenemargary" target="_blank" rel="noopener">Malt \u2197</a></div>'
+        + '</div>',
     })
     // skills
     addFrame({
-      x: 1080,
-      y: 140,
+      x: 2460,
+      y: 660,
       w: 320,
-      h: 300,
       label: "<b>m\u00e9thode.md</b>",
-      html: '<div class="pad"><div class="fbrand">ma fa\u00e7on de travailler</div><ul class="skl"><li>UI/UX from scratch &amp; refontes</li><li>Design system &amp; doc claire</li><li>Audit UX \u00b7 basse puis haute fid\u00e9lit\u00e9</li><li>Prototypes Figma pr\u00eats pour les devs</li><li>IA \u00b7 Claude Code \u00b7 MVP sans dev</li></ul></div>',
+      html: '<div class="mt-card">'
+        + '<div class="xp-eye">Ma fa\u00e7on de travailler</div>'
+        + '<div class="mt-list">'
+        + '<div class="mt-row"><span class="mt-num">01</span><div><div class="mt-title">UI/UX from scratch</div><div class="mt-desc">Refontes compl\u00e8tes et cr\u00e9ation</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">02</span><div><div class="mt-title">Design system</div><div class="mt-desc">Composants, tokens, doc claire</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">03</span><div><div class="mt-title">Audit UX</div><div class="mt-desc">Basse puis haute fid\u00e9lit\u00e9</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">04</span><div><div class="mt-title">Prototypes Figma</div><div class="mt-desc">Pr\u00eats pour les devs, spec\u00e9s</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">05</span><div><div class="mt-title">IA + vibe coding</div><div class="mt-desc">Claude Code + Figma, MVP sans dev</div></div></div>'
+        + '</div></div>',
     })
-    // arcade
+    // designer games
     addFrame({
-      x: 560,
-      y: 560,
+      x: 500,
+      y: 1330,
       w: 380,
-      h: 280,
       onOpen: true,
-      label: "<b>arcade/</b> \uD83C\uDFAE",
-      html: '<div class="pad"><div class="fbrand">pause</div><h3 class="ftitle" style="font-size:1.25rem">Arcade</h3><div class="arc"><button class="arcbtn" data-g="tetris"><span class="g">\u25A3</span> Tetris</button><button class="arcbtn" data-g="racer"><span class="g">\uD83C\uDFCE</span> Racer</button><button class="arcbtn" data-g="solitaire"><span class="g">\u2660</span> Solitaire</button><button class="arcbtn" data-g="pixel"><span class="g">\uD83C\uDFAF</span> Pixel Perfect</button></div></div>',
+      label: "<b>playground/</b> \uD83C\uDFA8",
+      html: '<div class="pg-card"><div class="pg-head"><span class="pg-icon">\uD83C\uDFA8</span><div><h3 class="pg-title">Playground</h3><p class="pg-sub">Petits jeux d\u2019\u0153il de designer. Clique pour jouer.</p></div></div><div class="pg-grid"><button class="pg-btn" data-g="coloreye"><span class="pg-emoji">\uD83D\uDFE2</span><span class="pg-name">Color Eye</span><span class="pg-desc">Trouve la couleur diff\u00e9rente</span></button><button class="pg-btn" data-g="kerning"><span class="pg-emoji">A\u2009V</span><span class="pg-name">Kerning</span><span class="pg-desc">Corrige l\u2019espacement</span></button><button class="pg-btn" data-g="colormix"><span class="pg-emoji">\uD83C\uDFA8</span><span class="pg-name">Color Mix</span><span class="pg-desc">Reproduis la couleur cible</span></button></div></div>',
+    })
+    // Skillgrid (projet client RH)
+    addFrame({
+      proj: "skillgrid",
+      x: 1180,
+      y: -10,
+      w: 520,
+      h: 540,
+      label: "<b>Skillgrid</b> · SaaS RH · gestion des talents",
+      html:
+        '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Skillgrid, piloter les talents</h3><div class="pcover"><img src="' +
+        SK_1 +
+        '" alt="Skillgrid"></div><p class="fdesc">Le SaaS RH qui réunit organigramme, matrice de compétences et entretiens au même endroit.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+    })
+    // Horsenest (projet client équestre)
+    addFrame({
+      proj: "horsenest",
+      x: 1160,
+      y: 670,
+      w: 520,
+      h: 540,
+      label: "<b>Horsenest</b> · SaaS · gestion équestre",
+      html:
+        '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Horsenest, gérer son écurie</h3><div class="pcover"><img src="' +
+        HR_P1 +
+        '" alt="Horsenest"></div><p class="fdesc">Une plateforme de gestion \u00e9questre, du site vitrine \u00e0 l\'application.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+    })
+    // Custo (projet client e-commerce)
+    addFrame({
+      proj: "custo",
+      x: 1190,
+      y: 1350,
+      w: 520,
+      h: 540,
+      label: "<b>Custo</b> · e-commerce · emballages personnalisés",
+      html:
+        '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Custo, le packaging sur mesure</h3><div class="pcover"><img src="' +
+        CU_1 +
+        '" alt="Custo"></div><p class="fdesc">Une plateforme B2B pour personnaliser et commander son packaging.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>E-commerce</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
     })
     // pins
     addPin(
-      420,
-      -310,
-      "Recruteur",
-      "Tr\u00e8s clair, le passage discovery \u2192 livraison Figma \uD83D\uDC4C"
+      380,
+      -60,
+      "Romane",
+      "Super clean le flow discovery \u2192 Figma \uD83D\uDC4C"
     )
-    addPin(960, 110, "L'Or\u00e9al", "Refonte vraiment propre, rigueur au top.")
+    addPin(2380, 300, "Lucas", "Nice refonte, approved \u2713")
     addPin(
-      478,
-      205,
-      "Claude",
-      "Genogy : design\u00e9 ET construit en solo avec l'IA. Rare et fort."
+      1080,
+      200,
+      "Cl\u00e9ment",
+      "Design + vibe coding en solo, respect."
     )
     addPin(
-      478,
-      785,
-      "Recruteur",
-      "Deux SaaS complets, design\u00e9s ET vibe cod\u00e9s en solo. \uD83D\uDD25"
+      1080,
+      600,
+      "Romane",
+      "Deux SaaS complets ship\u00e9s solo \uD83D\uDD25"
     )
 
-    // arcade buttons
+    // game buttons
     world.addEventListener("click", function (e) {
-      var ab = e.target.closest(".arcbtn")
+      var ab = e.target.closest(".pg-btn")
       if (!ab) return
       e.stopPropagation()
       var g = ab.dataset.g
-      if (g === "tetris") openTetris()
-      else if (g === "racer") openRacer()
-      else if (g === "solitaire") openSolitaire()
-      else if (g === "pixel") openPixel()
+      if (g === "coloreye") openColorEye()
+      else if (g === "kerning") openKerning()
+      else if (g === "colormix") openColorMix()
     })
 
     // ===== VIEW (pan/zoom) =====
@@ -342,16 +641,40 @@ export default function App() {
       })
       return { x: minx, y: miny, w: maxx - minx, h: maxy - miny }
     }
-    function fitRect(r, pad) {
-      var vw = innerWidth,
-        vh = innerHeight - 44
-      var s = clamp(Math.min(vw / r.w, vh / r.h) * (pad || 0.85), 0.18, 2.4)
+    function fitRect(r, pad, opts) {
+      opts = opts || {}
+      var topInset = opts.top || 44
+      var botInset = opts.bottom || 0
+      var vw = innerWidth
+      var vh = innerHeight - topInset - botInset
+      var maxS = opts.maxScale || 2.4
+      var s = clamp(Math.min(vw / r.w, vh / r.h) * (pad || 0.85), 0.18, maxS)
       var X = vw / 2 - (r.x + r.w / 2) * s
-      var Y = vh / 2 + 44 - (r.y + r.h / 2) * s
+      var centerY = topInset + vh / 2
+      var Y = centerY - (r.y + r.h / 2) * s
       animateView(s, X, Y)
     }
     function fitTo(f) {
-      fitRect({ x: f.x, y: f.y, w: f.w, h: f.h }, 0.78)
+      if (touring) {
+        fitToTour(f)
+      } else {
+        fitRect({ x: f.x, y: f.y, w: f.w, h: f.h }, 0.78)
+      }
+    }
+    function fitToTour(f) {
+      var margin = 24
+      var topBar = document.getElementById("bar")
+      var tourBar = document.querySelector(".tour-bar")
+      var topH = topBar ? topBar.getBoundingClientRect().height : 44
+      var botH = tourBar ? tourBar.getBoundingClientRect().height + 24 : 90 // 24 = overlay padding
+      var usableW = innerWidth - margin * 2
+      var usableH = innerHeight - topH - botH - margin * 2
+      var s = Math.min(usableW / f.w, usableH / f.h, 1)
+      s = Math.max(s, 0.18)
+      var X = innerWidth / 2 - (f.x + f.w / 2) * s
+      var centerY = topH + margin + usableH / 2
+      var Y = centerY - (f.y + f.h / 2) * s
+      animateView(s, X, Y)
     }
     function fitAll() {
       fitRect(worldBounds(), 0.82)
@@ -447,59 +770,148 @@ export default function App() {
     $("#fitBtn").addEventListener("click", fitAll)
 
     // guided tour
-    var tourStops,
-      tourIdx = -1,
-      touring = false
-    function tour() {
+    var tourIdx = -1, touring = false
+    var tourDef = [
+      { key: "moi.txt", caption: "Bienvenue dans mon fichier" },
+      { key: "apropos.me", caption: "Qui je suis" },
+      { key: "Genogy", caption: "Mon SaaS, design\u00e9 et construit en solo" },
+      { key: "Lexia", caption: "Mon produit que je fonde" },
+      { key: "Skillgrid", caption: "Projet client, design produit" },
+      { key: "Horsenest", caption: "Projet client, design produit" },
+      { key: "Custo", caption: "Projet client, design produit" },
+      { key: "Or\u00e9al", caption: "Grand compte, sous NDA" },
+      { key: "Stellantis", caption: "Grand compte, sous NDA" },
+      { key: "freelance.list", caption: "Ils m'ont fait confiance" },
+      { key: "parcours.list", caption: "Mon parcours" },
+      { key: "m\u00e9thode", caption: "Comment je travaille" },
+      { key: "playground", caption: "Un peu de jeu" },
+      { key: "apropos.me", caption: "Travaillons ensemble" },
+    ]
+    var tourStops = []
+    function buildTourStops() {
       tourStops = []
-      ;[
-        "Hélène",
-        "Genogy",
-        "Lexia",
-        "L'Oréal",
-        "Stellantis",
-        "confiance",
-        "méthode",
-        "arcade",
-      ].forEach(function (key) {
+      tourDef.forEach(function (d) {
         var f = frames.filter(function (x) {
-          return x.el.querySelector(".flabel").textContent.indexOf(key) >= 0
+          return x.el.querySelector(".flabel").textContent.indexOf(d.key) >= 0
         })[0]
-        if (f) tourStops.push(f)
+        if (f) tourStops.push({ frame: f, caption: d.caption })
       })
-      touring = true
-      tourIdx = -1
-      nextStop()
     }
-    function nextStop() {
-      if (!touring) return
-      tourIdx++
-      if (tourIdx >= tourStops.length) {
-        touring = false
-        fitAll()
-        return
+    var tourOverlay = document.getElementById("tourOverlay")
+    var tourCaption = document.getElementById("tourCaption")
+    var tourCounter = document.getElementById("tourCounter")
+    var tourPrev = document.getElementById("tourPrev")
+    var tourNext = document.getElementById("tourNext")
+    var tourAutoBtn = document.getElementById("tourAuto")
+    var tourProgress = document.getElementById("tourProgress")
+    var tourQuit = document.getElementById("tourQuit")
+    var hintbar = document.getElementById("hintbar")
+    var tourVeil = document.getElementById("tourVeil")
+    var tourAuto = false, tourTimer = null, TOUR_DELAY = 4500
+    var activeFrame = null
+
+    function showTourUI() {
+      tourOverlay.style.display = "flex"
+      hintbar.style.display = "none"
+    }
+    function hideTourUI() {
+      tourOverlay.style.display = "none"
+      hintbar.style.display = ""
+      clearHighlight()
+    }
+    function highlightFrame(f) {
+      clearHighlight()
+      if (f && f.el) {
+        f.el.classList.add("tour-active")
+        activeFrame = f.el
       }
-      fitTo(tourStops[tourIdx])
-      tourTO = setTimeout(nextStop, 2600)
     }
-    var tourTO = null
-    $("#tourBtn").addEventListener("click", function () {
-      if (touring) {
-        touring = false
-        clearTimeout(tourTO)
-        fitAll()
-        this.textContent = "\u25b6 visite guid\u00e9e"
+    function clearHighlight() {
+      if (activeFrame) { activeFrame.classList.remove("tour-active"); activeFrame = null }
+    }
+    function updateTourStep() {
+      var stop = tourStops[tourIdx]
+      fitTo(stop.frame)
+      highlightFrame(stop.frame)
+      tourCaption.textContent = stop.caption
+      tourCounter.textContent = (tourIdx + 1) + " / " + tourStops.length
+      tourPrev.style.visibility = tourIdx === 0 ? "hidden" : "visible"
+      var isLast = tourIdx === tourStops.length - 1
+      tourNext.textContent = isLast ? "Terminer" : "Suivant"
+      // progress bar
+      tourProgress.style.width = ((tourIdx + 1) / tourStops.length * 100) + "%"
+      // auto mode progress fill animation
+      if (tourAuto && !isLast) {
+        tourProgress.style.transition = "none"
+        tourProgress.style.width = (tourIdx / tourStops.length * 100) + "%"
+        // force reflow
+        tourProgress.offsetWidth
+        tourProgress.style.transition = "width " + (TOUR_DELAY / 1000) + "s linear"
+        tourProgress.style.width = ((tourIdx + 1) / tourStops.length * 100) + "%"
       } else {
-        this.textContent = "\u25a0 stop"
-        tour()
+        tourProgress.style.transition = "width .3s ease"
       }
+      // auto advance
+      clearTimeout(tourTimer)
+      if (tourAuto && !isLast) {
+        tourTimer = setTimeout(function () {
+          if (tourIdx < tourStops.length - 1) { tourIdx++; updateTourStep() }
+          else { stopAuto() }
+        }, TOUR_DELAY)
+      }
+      if (isLast && tourAuto) stopAuto()
+    }
+    function startAuto() {
+      tourAuto = true
+      tourAutoBtn.innerHTML = '&#10074;&#10074;'
+      tourAutoBtn.title = "Pause auto"
+      tourAutoBtn.classList.add("active")
+      updateTourStep()
+    }
+    function stopAuto() {
+      tourAuto = false
+      clearTimeout(tourTimer)
+      tourAutoBtn.innerHTML = '&#9654;'
+      tourAutoBtn.title = "Lecture auto"
+      tourAutoBtn.classList.remove("active")
+      tourProgress.style.transition = "width .3s ease"
+    }
+    function startTour() {
+      buildTourStops()
+      if (!tourStops.length) return
+      touring = true
+      tourIdx = 0
+      showTourUI()
+      startAuto()
+    }
+    function endTour() {
+      touring = false
+      tourIdx = -1
+      stopAuto()
+      hideTourUI()
+      fitAll()
+    }
+    tourPrev.addEventListener("click", function () {
+      if (tourIdx > 0) { stopAuto(); tourIdx--; updateTourStep() }
     })
-    vp.addEventListener("pointerdown", function () {
-      if (touring) {
-        touring = false
-        clearTimeout(tourTO)
-        $("#tourBtn").textContent = "\u25b6 visite guid\u00e9e"
-      }
+    tourNext.addEventListener("click", function () {
+      if (tourIdx < tourStops.length - 1) { stopAuto(); tourIdx++; updateTourStep() }
+      else { endTour() }
+    })
+    tourAutoBtn.addEventListener("click", function () {
+      if (tourAuto) stopAuto()
+      else startAuto()
+    })
+    tourQuit.addEventListener("click", function () { endTour() })
+    $("#tourBtn").addEventListener("click", function () {
+      if (touring) { endTour() } else { startTour() }
+    })
+    window.addEventListener("keydown", function (e) {
+      if (!touring) return
+      if (e.key === "Escape") { endTour(); e.stopPropagation() }
+      if (e.key === "ArrowRight") { tourNext.click() }
+      if (e.key === "ArrowLeft") { tourPrev.click() }
+      if (e.key === " ") { tourAutoBtn.click(); e.preventDefault() }
     })
 
     // keyboard
@@ -519,20 +931,21 @@ export default function App() {
     var arrow =
       '<svg viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6z" fill="currentColor"/></svg>'
     var sayings = {
-      Recruteur: ["int\u00e9ressant\u2026", "elle g\u00e8re", "je note \u2726", "dispo ?"],
-      Claude: ["joli fichier", "design \u00d7 IA \uD83E\uDD1D", "propre", "\u25b2"],
-      "L'Or\u00e9al": ["nickel", "on rappelle", "\u2713"],
+      Romane: ["nickel", "revoir flow", "v2 is better", "check spacing"],
+      Clément: ["create component", "on ship ?", "clean", "approved ✓"],
+      Lucas: ["update variants", "padding 👀", "let's go", "merge ok"],
     }
     var collabs = [
-      { name: "Recruteur", col: "#7C8FB8" },
-      { name: "Claude", col: "#7FA89B" },
-      { name: "L'Or\u00e9al", col: "#C2A06B" },
+      { name: "Romane", col: "#7C8FB8" },
+      { name: "Clément", col: "#7FA89B" },
+      { name: "Lucas", col: "#C2A06B" },
     ]
     var B = worldBounds()
     collabs.forEach(function (c) {
       var el = document.createElement("div")
       el.className = "cursor"
       el.style.color = c.col
+      el.style.setProperty("--cur-col", c.col)
       el.innerHTML =
         arrow + '<span class="flag">' + c.name + '</span><span class="say"></span>'
       curLayer.appendChild(el)
@@ -664,7 +1077,7 @@ export default function App() {
           sel: "#0D99FF",
           cardred: "#E5484D",
         },
-        accents: ["#F24E1E", "#FF7262", "#A259FF", "#1ABCFE", "#0ACF83"],
+        accents: ["#1ABCFE", "#F24E1E", "#0ACF83", "#FF7262", "#A259FF"],
         cursors: ["#A259FF", "#0ACF83", "#FF7262"],
       },
       pastel: {
@@ -750,6 +1163,7 @@ export default function App() {
       collabs.forEach(function (c, i) {
         c.col = p.cursors[i % p.cursors.length]
         c.el.style.color = c.col
+        c.el.style.setProperty("--cur-col", c.col)
         if (avs[i]) avs[i].style.background = c.col
       })
       document.querySelectorAll(".pal").forEach(function (b) {
@@ -761,25 +1175,8 @@ export default function App() {
     }
     applyPalette("figma")
 
-    // Build palette switcher
-    var palettesEl = document.getElementById("palettes")
-    Object.keys(PAL).forEach(function (key) {
-      var p = PAL[key]
-      var btn = document.createElement("button")
-      btn.className = "pal" + (key === "figma" ? " active" : "")
-      btn.dataset.k = key
-      var swatches = (p.accents || []).slice(0, 3)
-      var swHtml = '<span class="sw">'
-      swatches.forEach(function (c) {
-        swHtml += '<i style="background:' + c + '"></i>'
-      })
-      swHtml += "</span>"
-      btn.innerHTML = swHtml + "<span>" + p.name + "</span>"
-      btn.addEventListener("click", function () {
-        applyPalette(key)
-      })
-      palettesEl.appendChild(btn)
-    })
+    // Force Figma palette, no switcher
+    applyPalette("figma")
 
     // ===== WINDOW MANAGER + GAMES =====
     var zTop = 100
@@ -809,7 +1206,12 @@ export default function App() {
         active = false
       })
     }
+    var openGameWins = {}
     function openWindow(opts) {
+      if (opts.title && openGameWins[opts.title]) {
+        openGameWins[opts.title].style.zIndex = ++zTop
+        return openGameWins[opts.title]
+      }
       var win = document.createElement("div")
       win.className = "window"
       win.innerHTML =
@@ -829,7 +1231,9 @@ export default function App() {
         win.style.zIndex = ++zTop
       })
       draggable(win, win.querySelector(".wbar"), ".wdot.c")
+      if (opts.title) openGameWins[opts.title] = win
       function close() {
+        if (opts.title) delete openGameWins[opts.title]
         if (cleanup)
           try {
             cleanup()
@@ -840,730 +1244,317 @@ export default function App() {
       return win
     }
 
-    function gameTetris(b) {
-      var cols = 10,
-        rows = 20,
-        cell = 22,
-        cw = cols * cell,
-        ch = rows * cell
-      b.innerHTML =
-        '<div class="game"><canvas width="' +
-        cw +
-        '" height="' +
-        ch +
-        '"></canvas><div class="ginfo"><div>SCORE</div><div class="gscore">0</div><div class="ghint">\u2190 \u2192 bouger<br>\u2191 tourner<br>\u2193 descendre<br>espace : chute<br>P pause \u00b7 R rejouer</div></div></div>'
-      var g = b.querySelector("canvas").getContext("2d"),
-        C = {
-          bg: cv_("--bg2"),
-          grid: cv_("--hair"),
-          block: cv_("--text"),
-          cur: cv_("--live"),
-          text: cv_("--text"),
-        }
-      var sh = {
-          I: [[1, 1, 1, 1]],
-          O: [
-            [1, 1],
-            [1, 1],
-          ],
-          T: [
-            [0, 1, 0],
-            [1, 1, 1],
-          ],
-          S: [
-            [0, 1, 1],
-            [1, 1, 0],
-          ],
-          Z: [
-            [1, 1, 0],
-            [0, 1, 1],
-          ],
-          J: [
-            [1, 0, 0],
-            [1, 1, 1],
-          ],
-          L: [
-            [0, 0, 1],
-            [1, 1, 1],
-          ],
-        },
-        keys = Object.keys(sh),
-        board,
-        cur,
-        cx,
-        cy,
-        score = 0,
-        over = false,
-        paused = false
-      function clear() {
-        board = []
-        for (var r = 0; r < rows; r++) board.push(new Array(cols).fill(0))
-      }
-      clear()
-      function rot(m) {
-        var R = m.length,
-          Cc = m[0].length,
-          o = []
-        for (var c = 0; c < Cc; c++) {
-          var row = []
-          for (var r = R - 1; r >= 0; r--) row.push(m[r][c])
-          o.push(row)
-        }
-        return o
-      }
-      function coll(x, y, m) {
-        for (var r = 0; r < m.length; r++)
-          for (var c = 0; c < m[r].length; c++)
-            if (m[r][c]) {
-              var nx = x + c,
-                ny = y + r
-              if (nx < 0 || nx >= cols || ny >= rows) return 1
-              if (ny >= 0 && board[ny][nx]) return 1
-            }
-        return 0
-      }
-      function spawn() {
-        var k = keys[Math.floor(Math.random() * keys.length)]
-        cur = sh[k].map(function (r) {
-          return r.slice()
-        })
-        cx = Math.floor((cols - cur[0].length) / 2)
-        cy = 0
-        if (coll(cx, cy, cur)) over = true
-      }
-      function merge() {
-        for (var r = 0; r < cur.length; r++)
-          for (var c = 0; c < cur[r].length; c++)
-            if (cur[r][c] && cy + r >= 0) board[cy + r][cx + c] = 1
-      }
-      function cl() {
-        var n = 0
-        for (var r = rows - 1; r >= 0; r--)
-          if (
-            board[r].every(function (v) {
-              return v
-            })
-          ) {
-            board.splice(r, 1)
-            board.unshift(new Array(cols).fill(0))
-            n++
-            r++
-          }
-        if (n) {
-          score += [0, 40, 100, 300, 1200][n]
-          b.querySelector(".gscore").textContent = score
-        }
-      }
-      function drop() {
-        if (!coll(cx, cy + 1, cur)) cy++
-        else {
-          merge()
-          cl()
-          spawn()
-        }
-      }
-      function draw() {
-        g.fillStyle = C.bg
-        g.fillRect(0, 0, cw, ch)
-        g.strokeStyle = C.grid
-        for (var r = 0; r <= rows; r++) {
-          g.beginPath()
-          g.moveTo(0, r * cell)
-          g.lineTo(cw, r * cell)
-          g.stroke()
-        }
-        for (var c = 0; c <= cols; c++) {
-          g.beginPath()
-          g.moveTo(c * cell, 0)
-          g.lineTo(c * cell, ch)
-          g.stroke()
-        }
-        function bk(x, y, f) {
-          g.fillStyle = f
-          g.fillRect(x * cell + 1.5, y * cell + 1.5, cell - 3, cell - 3)
-        }
-        for (var r = 0; r < rows; r++)
-          for (var c = 0; c < cols; c++) if (board[r][c]) bk(c, r, C.block)
-        if (cur)
-          for (var r = 0; r < cur.length; r++)
-            for (var c = 0; c < cur[r].length; c++)
-              if (cur[r][c] && cy + r >= 0) bk(cx + c, cy + r, C.cur)
-        if (over || paused) {
-          g.fillStyle = "rgba(0,0,0,.55)"
-          g.fillRect(0, 0, cw, ch)
-          g.fillStyle = C.text
-          g.textAlign = "center"
-          g.font = 'bold 22px "Fraunces",serif'
-          g.fillText(over ? "game over" : "pause", cw / 2, ch / 2)
-          if (over) {
-            g.font = "11px JetBrains Mono,monospace"
-            g.fillText("R pour rejouer", cw / 2, ch / 2 + 24)
-          }
-        }
-      }
-      spawn()
-      var live = true,
-        acc = 0,
-        last = performance.now(),
-        raf = requestAnimationFrame(loop)
-      function loop(now) {
-        if (!live) return
-        var dt = now - last
-        last = now
-        if (!over && !paused) {
-          acc += dt
-          if (acc > 560) {
-            acc = 0
-            drop()
-          }
-        }
-        draw()
-        raf = requestAnimationFrame(loop)
-      }
-      function key(e) {
-        if (!live) return
-        var K = e.key
-        if (
-          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " "].indexOf(K) >= 0
-        )
-          e.preventDefault()
-        if (K === "r" || K === "R") {
-          clear()
-          score = 0
-          b.querySelector(".gscore").textContent = 0
-          over = false
-          paused = false
-          spawn()
-          return
-        }
-        if (K === "p" || K === "P") {
-          paused = !paused
-          return
-        }
-        if (over) return
-        if (K === "ArrowLeft" && !coll(cx - 1, cy, cur)) cx--
-        else if (K === "ArrowRight" && !coll(cx + 1, cy, cur)) cx++
-        else if (K === "ArrowDown") drop()
-        else if (K === "ArrowUp") {
-          var rr = rot(cur)
-          if (!coll(cx, cy, rr)) cur = rr
-          else if (!coll(cx - 1, cy, rr)) {
-            cx--
-            cur = rr
-          } else if (!coll(cx + 1, cy, rr)) {
-            cx++
-            cur = rr
-          }
-        } else if (K === " ") {
-          while (!coll(cx, cy + 1, cur)) cy++
-          drop()
-        }
-      }
-      document.addEventListener("keydown", key)
-      return function () {
-        live = false
-        cancelAnimationFrame(raf)
-        document.removeEventListener("keydown", key)
-      }
-    }
-    function openTetris() {
-      openWindow({ title: "tetris", build: gameTetris })
-    }
+    /* ===== COLOR EYE ===== */
+    function gameColorEye(b) {
+      var level = 0, score = 0, best = 0, live = true
+      var wrap = document.createElement("div")
+      wrap.style.cssText = "padding:18px;width:320px;font-family:'JetBrains Mono',monospace"
+      wrap.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:14px">'
+        + '<span>Trouve la couleur diff\u00e9rente</span>'
+        + '<div style="display:flex;gap:12px;align-items:center"><span class="ce-lvl" style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)">Niv. 1</span><span style="font-size:13px;font-weight:700;color:var(--text)" class="ce-score">0</span></div>'
+        + '</div>'
+        + '<div class="ce-grid" style="display:grid;gap:6px;border-radius:10px;padding:6px;background:var(--surface);border:1px solid var(--hair)"></div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;min-height:20px">'
+        + '<span class="ce-msg" style="font-size:11px;color:var(--muted)"></span>'
+        + '<span class="ce-best" style="font-size:9px;color:var(--faint)">record : 0</span>'
+        + '</div>'
+      b.appendChild(wrap)
+      var grid = wrap.querySelector(".ce-grid")
+      var scoreEl = wrap.querySelector(".ce-score")
+      var msgEl = wrap.querySelector(".ce-msg")
+      var lvlEl = wrap.querySelector(".ce-lvl")
+      var bestEl = wrap.querySelector(".ce-best")
 
-    function gameRacer(b) {
-      var W = 260,
-        H = 440
-      b.innerHTML =
-        '<div class="game"><canvas width="' +
-        W +
-        '" height="' +
-        H +
-        '"></canvas><div class="ginfo"><div>SCORE</div><div class="gscore">0</div><div class="ghint">\u2190 \u2192 diriger<br>\u00e9vite les voitures<br>R rejouer</div></div></div>'
-      var g = b.querySelector("canvas").getContext("2d"),
-        C = {
-          bg: cv_("--bg2"),
-          road: cv_("--surface"),
-          line: cv_("--hair"),
-          car: cv_("--text"),
-          enemy: cv_("--muted"),
-          text: cv_("--text"),
-        }
-      var rW = 170,
-        rX = (W - rW) / 2,
-        pw = 24,
-        ph = 42,
-        py = H - 66,
-        px = W / 2 - 12,
-        en,
-        scroll,
-        sp,
-        sc,
-        over,
-        spT,
-        L = false,
-        Rr = false
-      function reset() {
-        en = []
-        scroll = 0
-        sp = 3
-        sc = 0
-        over = false
-        spT = 0
-        px = W / 2 - 12
-      }
-      reset()
-      function rr(x, y, w, h, r) {
-        g.beginPath()
-        g.moveTo(x + r, y)
-        g.arcTo(x + w, y, x + w, y + h, r)
-        g.arcTo(x + w, y + h, x, y + h, r)
-        g.arcTo(x, y + h, x, y, r)
-        g.arcTo(x, y, x + w, y, r)
-        g.closePath()
-      }
-      function car(x, y, col) {
-        g.fillStyle = col
-        rr(x, y, pw, ph, 5)
-        g.fill()
-        g.fillStyle = C.bg
-        g.fillRect(x + 4, y + 6, pw - 8, 8)
-        g.fillRect(x + 4, y + ph - 14, pw - 8, 8)
-      }
-      var live = true,
-        raf = requestAnimationFrame(loop)
-      function loop() {
-        if (!live) return
-        if (!over) {
-          scroll += sp
-          sp += 0.001
-          sc += sp * 0.06
-          if (L) px -= 4.2
-          if (Rr) px += 4.2
-          px = Math.max(rX + 4, Math.min(rX + rW - pw - 4, px))
-          spT -= sp
-          if (spT <= 0) {
-            spT = 130 + Math.random() * 120
-            en.push({ x: rX + 8 + Math.random() * (rW - pw - 16), y: -50 })
-          }
-          en.forEach(function (e) {
-            e.y += sp * 1.05
-          })
-          en = en.filter(function (e) {
-            return e.y < H + 60
-          })
-          en.forEach(function (e) {
-            if (
-              e.y + ph > py &&
-              e.y < py + ph &&
-              e.x + pw > px &&
-              e.x < px + pw
-            )
-              over = true
-          })
-        }
-        g.fillStyle = C.bg
-        g.fillRect(0, 0, W, H)
-        g.fillStyle = C.road
-        g.fillRect(rX, 0, rW, H)
-        g.strokeStyle = C.line
-        g.lineWidth = 3
-        g.setLineDash([18, 18])
-        g.lineDashOffset = -(scroll % 36)
-        g.beginPath()
-        g.moveTo(W / 2, 0)
-        g.lineTo(W / 2, H)
-        g.stroke()
-        g.setLineDash([])
-        g.fillStyle = C.line
-        g.fillRect(rX - 2, 0, 2, H)
-        g.fillRect(rX + rW, 0, 2, H)
-        en.forEach(function (e) {
-          car(e.x, e.y, C.enemy)
-        })
-        car(px, py, C.car)
-        b.querySelector(".gscore").textContent = Math.floor(sc)
-        if (over) {
-          g.fillStyle = "rgba(0,0,0,.6)"
-          g.fillRect(0, 0, W, H)
-          g.fillStyle = C.text
-          g.textAlign = "center"
-          g.font = 'bold 22px "Fraunces",serif'
-          g.fillText("crash !", W / 2, H / 2)
-          g.font = "11px JetBrains Mono,monospace"
-          g.fillText("R pour rejouer", W / 2, H / 2 + 24)
-        }
-        raf = requestAnimationFrame(loop)
-      }
-      function kd(e) {
-        if (!live) return
-        if (e.key === "ArrowLeft") {
-          L = true
-          e.preventDefault()
-        } else if (e.key === "ArrowRight") {
-          Rr = true
-          e.preventDefault()
-        } else if ((e.key === "r" || e.key === "R") && over) reset()
-      }
-      function ku(e) {
-        if (e.key === "ArrowLeft") L = false
-        else if (e.key === "ArrowRight") Rr = false
-      }
-      document.addEventListener("keydown", kd)
-      document.addEventListener("keyup", ku)
-      return function () {
-        live = false
-        cancelAnimationFrame(raf)
-        document.removeEventListener("keydown", kd)
-        document.removeEventListener("keyup", ku)
-      }
-    }
-    function openRacer() {
-      openWindow({ title: "racer", build: gameRacer })
-    }
+      function hslStr(h, s, l) { return "hsl(" + h + "," + s + "%," + l + "%)" }
 
-    function gamePixel(b) {
-      b.innerHTML =
-        '<div class="pixwrap"><div class="pixhead"><span>aligne le bloc \u00b7 <b class="pixscore">0</b> shipp\u00e9s</span><span class="pixoff">x:0 y:0</span></div><div class="pixstage"><div class="pixtarget"></div><div class="pixblock"></div></div><div class="pixhint">glisse \u00b7 fl\u00e8ches = 1px \u00b7 <b>entr\u00e9e</b> = ship</div></div>'
-      var stage = b.querySelector(".pixstage"),
-        target = b.querySelector(".pixtarget"),
-        block = b.querySelector(".pixblock"),
-        offEl = b.querySelector(".pixoff"),
-        scoreEl = b.querySelector(".pixscore")
-      var tx, ty, bx, by, score = 0, tol = 4, live = true, ready = false
       function round() {
-        setTimeout(function () {
-          var sw = stage.clientWidth,
-            sh = stage.clientHeight
-          tx = Math.round(sw / 2 - 30)
-          ty = Math.round(sh / 2 - 30)
-          target.style.left = tx + "px"
-          target.style.top = ty + "px"
-          bx = clamp(tx + (Math.random() * 130 - 65), 0, sw - 60)
-          by = clamp(ty + (Math.random() * 90 - 45), 0, sh - 60)
-          ready = true
-          place()
-        }, 20)
-      }
-      function place() {
-        if (!ready) return
-        block.style.left = Math.round(bx) + "px"
-        block.style.top = Math.round(by) + "px"
-        var dx = Math.round(bx - tx),
-          dy = Math.round(by - ty)
-        offEl.textContent = "x:" + dx + " y:" + dy
-        block.classList.toggle("near", Math.abs(dx) <= tol && Math.abs(dy) <= tol)
-      }
-      function ship() {
-        if (!ready) return
-        if (Math.abs(bx - tx) <= tol && Math.abs(by - ty) <= tol) {
-          score++
-          scoreEl.textContent = score
-          block.classList.add("shipped")
-          setTimeout(function () {
-            block.classList.remove("shipped")
-            round()
-          }, 240)
-        } else {
-          block.classList.add("shake")
-          setTimeout(function () {
-            block.classList.remove("shake")
-          }, 300)
+        if (!live) return
+        lvlEl.textContent = "Niv. " + (level + 1)
+        var cols = level < 3 ? 3 : level < 8 ? 4 : level < 14 ? 5 : 6
+        grid.style.gridTemplateColumns = "repeat(" + cols + ",1fr)"
+        var count = cols * cols
+        var bh = Math.floor(Math.random() * 360)
+        var bs = 45 + Math.floor(Math.random() * 30)
+        var bl = 40 + Math.floor(Math.random() * 25)
+        var diff = Math.max(2, 30 - level * 2.2)
+        var oddIdx = Math.floor(Math.random() * count)
+        var oddL = bl + (Math.random() < 0.5 ? diff : -diff)
+
+        grid.innerHTML = ""
+        for (var i = 0; i < count; i++) {
+          var cell = document.createElement("div")
+          var isOdd = i === oddIdx
+          cell.style.cssText = "aspect-ratio:1;border-radius:7px;cursor:pointer;transition:transform .15s,opacity .15s,box-shadow .15s;background:" + hslStr(bh, bs, isOdd ? oddL : bl)
+          cell.dataset.odd = isOdd ? "1" : "0"
+          cell.onmouseenter = function () { this.style.transform = "scale(1.05)" }
+          cell.onmouseleave = function () { this.style.transform = "" }
+          cell.addEventListener("click", function () {
+            if (!live) return
+            if (this.dataset.odd === "1") {
+              score++; level++
+              if (score > best) { best = score; bestEl.textContent = "record : " + best }
+              scoreEl.textContent = score
+              scoreEl.style.transform = "scale(1.3)"
+              setTimeout(function () { scoreEl.style.transform = "" }, 200)
+              msgEl.textContent = level < 4 ? "Bien vu !" : level < 8 ? "Bon \u0153il \uD83D\uDC40" : level < 14 ? "\u0152il de designer \u2726" : "Surhumain \uD83D\uDD25"
+              msgEl.style.color = "var(--live)"
+              this.style.transform = "scale(1.15)"
+              this.style.boxShadow = "0 0 0 3px var(--text)"
+              var self = this
+              setTimeout(function () { self.style.transform = ""; self.style.boxShadow = ""; round() }, 350)
+            } else {
+              this.style.opacity = "0.25"
+              msgEl.style.color = "var(--muted)"
+              msgEl.textContent = "Rat\u00e9 ! Niveau remis \u00e0 z\u00e9ro"
+              var cells = grid.children
+              for (var j = 0; j < cells.length; j++) {
+                if (cells[j].dataset.odd === "1") {
+                  cells[j].style.boxShadow = "0 0 0 3px var(--text)"
+                  cells[j].style.transform = "scale(1.15)"
+                }
+              }
+              level = 0
+              setTimeout(round, 900)
+            }
+          })
+          grid.appendChild(cell)
         }
+        msgEl.textContent = ""
+        msgEl.style.color = "var(--muted)"
       }
-      var drag = false, ox, oy
-      block.addEventListener("pointerdown", function (e) {
-        drag = true
-        var r = stage.getBoundingClientRect()
-        ox = e.clientX - r.left - bx
-        oy = e.clientY - r.top - by
-        try {
-          block.setPointerCapture(e.pointerId)
-        } catch (_) {}
-      })
-      block.addEventListener("pointermove", function (e) {
-        if (!drag) return
-        var r = stage.getBoundingClientRect()
-        bx = clamp(e.clientX - r.left - ox, 0, stage.clientWidth - 60)
-        by = clamp(e.clientY - r.top - oy, 0, stage.clientHeight - 60)
-        place()
-      })
-      block.addEventListener("pointerup", function () {
-        drag = false
-      })
-      function key(e) {
-        if (!live || !ready) return
-        if (
-          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"].indexOf(
-            e.key
-          ) < 0
-        )
-          return
-        e.preventDefault()
-        if (e.key === "ArrowLeft") bx--
-        else if (e.key === "ArrowRight") bx++
-        else if (e.key === "ArrowUp") by--
-        else if (e.key === "ArrowDown") by++
-        else if (e.key === "Enter") {
-          ship()
-          return
-        }
-        place()
-      }
-      document.addEventListener("keydown", key)
       round()
-      return function () {
-        live = false
-        document.removeEventListener("keydown", key)
-      }
+      return function () { live = false }
     }
-    function openPixel() {
-      openWindow({ title: "pixel-perfect", build: gamePixel })
+    function openColorEye() {
+      openWindow({ title: "color eye", build: gameColorEye })
     }
 
-    function gameSolitaire(b) {
-      var SU = [
-          { s: "\u2660", c: "b" },
-          { s: "\u2665", c: "r" },
-          { s: "\u2666", c: "r" },
-          { s: "\u2663", c: "b" },
-        ],
-        RK = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"],
-        deck = []
-      SU.forEach(function (su, si) {
-        RK.forEach(function (r, ri) {
-          deck.push({ su: si, rk: ri, up: false })
-        })
+    /* ===== KERNING ===== */
+    function gameKerning(b) {
+      var WORDS = [
+        { w: "AVENIR", bad: 2, off: 12 },
+        { w: "TOKYO", bad: 2, off: -10 },
+        { w: "VOYAGE", bad: 3, off: 11 },
+        { w: "WALTER", bad: 1, off: -13 },
+        { w: "TYPOG", bad: 3, off: 10 },
+        { w: "LAYOUT", bad: 2, off: -11 },
+        { w: "FIGMA", bad: 1, off: 14 },
+        { w: "PIXEL", bad: 2, off: -12 },
+        { w: "CLAMP", bad: 3, off: 11 },
+        { w: "BRAND", bad: 2, off: -10 },
+      ]
+      var score = 0, rd = 0, live = true, current, dragLetter, dragStartX, letterOffset
+
+      var wrap = document.createElement("div")
+      wrap.style.cssText = "padding:18px;width:340px;font-family:'JetBrains Mono',monospace"
+      wrap.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:4px">'
+        + '<span>Corrige le kerning</span>'
+        + '<div style="display:flex;gap:12px;align-items:center"><span class="kn-rd" style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)">1/10</span><span style="font-size:13px;font-weight:700;color:var(--text)" class="kn-score">0</span></div>'
+        + '</div>'
+        + '<div style="font-size:10px;color:var(--faint);margin-bottom:14px">Glisse la lettre violette pour \u00e9galiser l\u2019espacement</div>'
+        + '<div class="kn-word" style="display:flex;justify-content:center;align-items:center;height:90px;border:1px solid var(--hair);border-radius:12px;background:var(--surface);margin-bottom:10px;position:relative;overflow:hidden"></div>'
+        + '<div class="kn-gauge" style="height:4px;border-radius:3px;background:color-mix(in srgb,var(--text) 10%,transparent);margin-bottom:12px;overflow:hidden"><div class="kn-fill" style="height:100%;width:0;border-radius:3px;background:var(--live);transition:width .3s"></div></div>'
+        + '<div style="display:flex;gap:8px;justify-content:center"><button class="kn-ship" style="font-size:12px;border:1px solid var(--hair);border-radius:8px;padding:9px 20px;cursor:pointer;background:var(--text);color:var(--bg);font-weight:600;transition:.15s;border-color:var(--text)">Ship it \u2192</button></div>'
+        + '<div class="kn-msg" style="text-align:center;font-size:11px;margin-top:10px;min-height:16px;color:var(--muted)"></div>'
+      b.appendChild(wrap)
+
+      var wordEl = wrap.querySelector(".kn-word")
+      var scoreEl = wrap.querySelector(".kn-score")
+      var msgEl = wrap.querySelector(".kn-msg")
+      var shipBtn = wrap.querySelector(".kn-ship")
+      var rdEl = wrap.querySelector(".kn-rd")
+      var fillEl = wrap.querySelector(".kn-fill")
+
+      function newRound() {
+        if (!live) return
+        current = WORDS[rd % WORDS.length]
+        letterOffset = current.off
+        rdEl.textContent = (rd % WORDS.length + 1) + "/" + WORDS.length
+        renderWord()
+        msgEl.textContent = ""
+      }
+
+      function renderWord() {
+        wordEl.innerHTML = ""
+        for (var i = 0; i < current.w.length; i++) {
+          var span = document.createElement("span")
+          span.textContent = current.w[i]
+          span.style.cssText = "font-family:'Fraunces',serif;font-weight:700;font-size:2.6rem;line-height:1;user-select:none;transition:color .15s,transform .1s"
+          if (i === current.bad) {
+            span.style.color = "#A259FF"
+            span.style.cursor = "grab"
+            span.style.marginLeft = letterOffset + "px"
+            span.style.position = "relative"
+            span.style.textShadow = "0 2px 8px rgba(162,89,255,.25)"
+            span.dataset.drag = "1"
+          }
+          wordEl.appendChild(span)
+        }
+      }
+
+      wordEl.addEventListener("pointerdown", function (e) {
+        var t = e.target
+        if (t.dataset.drag !== "1") return
+        dragLetter = t
+        dragStartX = e.clientX
+        t.style.cursor = "grabbing"
+        t.style.transform = "scale(1.08)"
+        try { t.setPointerCapture(e.pointerId) } catch (_) {}
       })
-      for (var i = deck.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1)),
-          t = deck[i]
-        deck[i] = deck[j]
-        deck[j] = t
-      }
-      var tab = [[], [], [], [], [], [], []],
-        fnd = [[], [], [], []],
-        stock = [],
-        waste = [],
-        di = 0
-      for (var c = 0; c < 7; c++)
-        for (var n = 0; n <= c; n++) {
-          var card = deck[di++]
-          card.up = n === c
-          tab[c].push(card)
-        }
-      while (di < deck.length) {
-        var k = deck[di++]
-        k.up = false
-        stock.push(k)
-      }
-      var sel = null
-      b.innerHTML =
-        '<div class="sol"><div class="soltop"><div class="solslot" data-z="stock"></div><div class="solslot" data-z="waste"></div><div class="solspacer"></div><div class="solslot" data-z="found" data-f="0"></div><div class="solslot" data-z="found" data-f="1"></div><div class="solslot" data-z="found" data-f="2"></div><div class="solslot" data-z="found" data-f="3"></div></div><div class="soltab"></div><div class="solmsg"></div></div>'
-      var solRoot = b.querySelector(".sol"),
-        tabEl = b.querySelector(".soltab"),
-        msg = b.querySelector(".solmsg")
-      function face(c) {
-        return RK[c.rk] + SU[c.su].s
-      }
-      function canF(c, f) {
-        var p = fnd[f]
-        if (!p.length) return c.rk === 0
-        var t = p[p.length - 1]
-        return t.su === c.su && c.rk === t.rk + 1
-      }
-      function canT(c, col) {
-        var p = tab[col]
-        if (!p.length) return c.rk === 12
-        var t = p[p.length - 1]
-        if (!t.up) return false
-        return SU[t.su].c !== SU[c.su].c && t.rk === c.rk + 1
-      }
-      function render() {
-        solRoot.querySelector('[data-z="stock"]').innerHTML = stock.length
-          ? '<div class="card down" style="position:static"></div>'
-          : "\u21bb"
-        var wa = solRoot.querySelector('[data-z="waste"]')
-        wa.innerHTML = ""
-        if (waste.length) {
-          var w = waste[waste.length - 1]
-          wa.innerHTML =
-            '<div class="card ' +
-            (SU[w.su].c === "r" ? "red" : "") +
-            (sel && sel.from === "waste" ? " sel" : "") +
-            '" style="position:static" data-z="wastecard">' +
-            face(w) +
-            "</div>"
-        }
-        for (var f = 0; f < 4; f++) {
-          var fe = solRoot.querySelector('[data-z="found"][data-f="' + f + '"]'),
-            p = fnd[f]
-          fe.innerHTML = p.length
-            ? '<div class="card ' +
-              (SU[p[p.length - 1].su].c === "r" ? "red" : "") +
-              '" style="position:static">' +
-              face(p[p.length - 1]) +
-              "</div>"
-            : SU[f].s
-        }
-        tabEl.innerHTML = ""
-        for (var c = 0; c < 7; c++) {
-          ;(function (c) {
-            var col = document.createElement("div")
-            col.className = "solcol"
-            col.dataset.z = "col"
-            col.dataset.col = c
-            tab[c].forEach(function (card, idx) {
-              var d = document.createElement("div")
-              d.className =
-                "card " +
-                (card.up
-                  ? SU[card.su].c === "r"
-                    ? "red"
-                    : ""
-                  : "down") +
-                (sel && sel.from === "tab" && sel.col === c && idx >= sel.idx
-                  ? " sel"
-                  : "")
-              d.style.top = idx * 18 + "px"
-              if (card.up) {
-                d.textContent = face(card)
-                d.dataset.z = "tabcard"
-                d.dataset.col = c
-                d.dataset.idx = idx
-              }
-              col.appendChild(d)
-            })
-            tabEl.appendChild(col)
-          })(c)
-        }
-        if (
-          fnd.every(function (p) {
-            return p.length === 13
-          })
-        )
-          msg.textContent = "\uD83C\uDF89 gagn\u00e9 !"
-      }
-      function deal() {
-        if (stock.length) {
-          var c = stock.pop()
-          c.up = true
-          waste.push(c)
+      wordEl.addEventListener("pointermove", function (e) {
+        if (!dragLetter) return
+        var dx = e.clientX - dragStartX
+        letterOffset = current.off + dx
+        letterOffset = Math.max(-30, Math.min(30, letterOffset))
+        dragLetter.style.marginLeft = letterOffset + "px"
+      })
+      wordEl.addEventListener("pointerup", function () {
+        if (dragLetter) { dragLetter.style.cursor = "grab"; dragLetter.style.transform = "" }
+        dragLetter = null
+      })
+
+      shipBtn.addEventListener("click", function () {
+        if (!live) return
+        var err = Math.abs(letterOffset)
+        var pts = 0
+        if (err <= 2) {
+          pts = 3
+          msgEl.innerHTML = '<span style="color:var(--live)">Pixel perfect ! +3</span>'
+        } else if (err <= 5) {
+          pts = 2
+          msgEl.innerHTML = '<span style="color:var(--live)">Bien vu ! +2</span>'
+        } else if (err <= 10) {
+          pts = 1
+          msgEl.textContent = "Pas mal. +1"
         } else {
-          while (waste.length) {
-            var w = waste.pop()
-            w.up = false
-            stock.push(w)
-          }
+          msgEl.textContent = "\u00c0 " + Math.round(err) + "px pr\u00e8s\u2026"
         }
-        sel = null
-      }
-      function flip(col) {
-        var p = tab[col]
-        if (p.length && !p[p.length - 1].up) p[p.length - 1].up = true
-      }
-      function autoF(card, fromTab, col) {
-        for (var f = 0; f < 4; f++)
-          if (canF(card, f)) {
-            fnd[f].push(card)
-            if (fromTab) {
-              tab[col].pop()
-              flip(col)
-            } else waste.pop()
-            return true
-          }
-        return false
-      }
-      function move(type, col, f) {
-        var moving,
-          fromTab = sel.from === "tab"
-        if (sel.from === "waste") moving = [waste[waste.length - 1]]
-        else moving = tab[sel.col].slice(sel.idx)
-        if (type === "found") {
-          if (moving.length !== 1 || !canF(moving[0], f)) return false
-          fnd[f].push(moving[0])
-          if (fromTab) {
-            tab[sel.col].pop()
-            flip(sel.col)
-          } else waste.pop()
-          return true
-        }
-        if (!canT(moving[0], col)) return false
-        moving.forEach(function (m) {
-          tab[col].push(m)
-        })
-        if (fromTab) {
-          tab[sel.col].splice(sel.idx)
-          flip(sel.col)
-        } else waste.pop()
-        return true
-      }
-      solRoot.addEventListener("click", function (e) {
-        msg.textContent = ""
-        var el = e.target.closest("[data-z]")
-        if (!el) return
-        var z = el.dataset.z
-        if (z === "stock") {
-          deal()
-          render()
-          return
-        }
-        if (z === "wastecard") {
-          sel = sel ? null : { from: "waste" }
-          render()
-          return
-        }
-        if (z === "tabcard") {
-          var col = +el.dataset.col,
-            idx = +el.dataset.idx
-          if (!sel || (sel.from === "tab" && sel.col === col)) {
-            sel = { from: "tab", col: col, idx: idx }
-            render()
-            return
-          }
-          if (move("tab", col)) sel = null
-          else sel = { from: "tab", col: col, idx: idx }
-          render()
-          return
-        }
-        if (z === "col") {
-          if (sel && move("tab", +el.dataset.col)) {
-            sel = null
-            render()
-          }
-          return
-        }
-        if (z === "found") {
-          if (sel && move("found", null, +el.dataset.f)) {
-            sel = null
-            render()
-          }
-          return
-        }
+        score += pts
+        scoreEl.textContent = score
+        scoreEl.style.transform = "scale(1.3)"
+        setTimeout(function () { scoreEl.style.transform = "" }, 200)
+        rd++
+        fillEl.style.width = ((rd % WORDS.length) / WORDS.length * 100) + "%"
+        setTimeout(newRound, 700)
       })
-      solRoot.addEventListener("dblclick", function (e) {
-        var el = e.target.closest("[data-z]")
-        if (!el) return
-        if (el.dataset.z === "tabcard") {
-          var col = +el.dataset.col,
-            idx = +el.dataset.idx
-          if (idx === tab[col].length - 1 && autoF(tab[col][idx], true, col)) {
-            sel = null
-            render()
-          }
-        } else if (
-          el.dataset.z === "wastecard" &&
-          waste.length &&
-          autoF(waste[waste.length - 1], false)
-        ) {
-          sel = null
-          render()
-        }
-      })
-      render()
-      return function () {}
+
+      newRound()
+      return function () { live = false }
     }
-    function openSolitaire() {
-      openWindow({ title: "solitaire", build: gameSolitaire })
+    function openKerning() {
+      openWindow({ title: "kerning", build: gameKerning })
+    }
+
+    /* ===== COLOR MIX ===== */
+    function gameColorMix(b) {
+      var score = 0, rd = 0, live = true, targetH, targetS, targetL
+      var wrap = document.createElement("div")
+      wrap.style.cssText = "padding:18px;width:340px;font-family:'JetBrains Mono',monospace"
+      wrap.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:14px">'
+        + '<span>Reproduis la couleur cible</span>'
+        + '<span style="font-size:13px;font-weight:700;color:var(--text)" class="cm-score">0</span>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;margin-bottom:14px">'
+        + '<div class="cm-target" style="flex:1;height:80px;border-radius:10px;border:1px solid var(--hair);position:relative;overflow:hidden"><span style="position:absolute;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px rgba(0,0,0,.4)">cible</span></div>'
+        + '<div class="cm-yours" style="flex:1;height:80px;border-radius:10px;border:1px solid var(--hair);position:relative;overflow:hidden"><span style="position:absolute;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px rgba(0,0,0,.4)">toi</span></div>'
+        + '</div>'
+        + '<div class="cm-sliders" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">'
+        + '<label style="display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)"><span style="width:10px">H</span><input type="range" class="cm-h" min="0" max="360" value="180" style="flex:1;accent-color:#A259FF;height:4px"><span class="cm-hv" style="width:28px;text-align:right;font-size:10px;color:var(--faint)">180</span></label>'
+        + '<label style="display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)"><span style="width:10px">S</span><input type="range" class="cm-s" min="0" max="100" value="50" style="flex:1;accent-color:#A259FF;height:4px"><span class="cm-sv" style="width:28px;text-align:right;font-size:10px;color:var(--faint)">50</span></label>'
+        + '<label style="display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)"><span style="width:10px">L</span><input type="range" class="cm-l" min="0" max="100" value="50" style="flex:1;accent-color:#A259FF;height:4px"><span class="cm-lv" style="width:28px;text-align:right;font-size:10px;color:var(--faint)">50</span></label>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;align-items:center"><button class="cm-ship" style="flex:1;font-size:12px;font-family:inherit;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;background:var(--text);color:var(--bg);font-weight:600;transition:.15s">Valider</button><span class="cm-acc" style="font-size:11px;color:var(--faint);min-width:50px;text-align:right"></span></div>'
+        + '<div class="cm-msg" style="text-align:center;font-size:11px;margin-top:10px;min-height:16px;color:var(--muted)"></div>'
+      b.appendChild(wrap)
+
+      var targetEl = wrap.querySelector(".cm-target")
+      var yoursEl = wrap.querySelector(".cm-yours")
+      var hSlider = wrap.querySelector(".cm-h")
+      var sSlider = wrap.querySelector(".cm-s")
+      var lSlider = wrap.querySelector(".cm-l")
+      var hVal = wrap.querySelector(".cm-hv")
+      var sVal = wrap.querySelector(".cm-sv")
+      var lVal = wrap.querySelector(".cm-lv")
+      var scoreEl = wrap.querySelector(".cm-score")
+      var msgEl = wrap.querySelector(".cm-msg")
+      var accEl = wrap.querySelector(".cm-acc")
+      var shipBtn = wrap.querySelector(".cm-ship")
+
+      function hsl(h, s, l) { return "hsl(" + h + "," + s + "%," + l + "%)" }
+
+      function updateYours() {
+        var h = +hSlider.value, s = +sSlider.value, l = +lSlider.value
+        yoursEl.style.background = hsl(h, s, l)
+        hVal.textContent = h
+        sVal.textContent = s
+        lVal.textContent = l
+        // live accuracy
+        var dh = Math.min(Math.abs(h - targetH), 360 - Math.abs(h - targetH))
+        var ds = Math.abs(s - targetS)
+        var dl = Math.abs(l - targetL)
+        var dist = Math.sqrt(dh * dh / 4 + ds * ds + dl * dl)
+        var pct = Math.max(0, Math.round(100 - dist))
+        accEl.textContent = pct + "% match"
+        accEl.style.color = pct >= 90 ? "var(--live)" : "var(--faint)"
+      }
+
+      function newRound() {
+        if (!live) return
+        targetH = Math.floor(Math.random() * 360)
+        targetS = 30 + Math.floor(Math.random() * 55)
+        targetL = 30 + Math.floor(Math.random() * 40)
+        targetEl.style.background = hsl(targetH, targetS, targetL)
+        // randomize sliders
+        hSlider.value = Math.floor(Math.random() * 360)
+        sSlider.value = Math.floor(Math.random() * 100)
+        lSlider.value = Math.floor(Math.random() * 100)
+        updateYours()
+        msgEl.textContent = ""
+      }
+
+      hSlider.addEventListener("input", updateYours)
+      sSlider.addEventListener("input", updateYours)
+      lSlider.addEventListener("input", updateYours)
+
+      shipBtn.addEventListener("click", function () {
+        if (!live) return
+        var h = +hSlider.value, s = +sSlider.value, l = +lSlider.value
+        var dh = Math.min(Math.abs(h - targetH), 360 - Math.abs(h - targetH))
+        var ds = Math.abs(s - targetS)
+        var dl = Math.abs(l - targetL)
+        var dist = Math.sqrt(dh * dh / 4 + ds * ds + dl * dl)
+        var pct = Math.max(0, Math.round(100 - dist))
+        var pts = 0
+        if (pct >= 97) {
+          pts = 3; msgEl.innerHTML = '<span style="color:var(--live)">Parfait ! +3 \u2728</span>'
+        } else if (pct >= 90) {
+          pts = 2; msgEl.innerHTML = '<span style="color:var(--live)">Tr\u00e8s proche ! +2</span>'
+        } else if (pct >= 75) {
+          pts = 1; msgEl.textContent = "Pas mal ! +1"
+        } else {
+          msgEl.textContent = pct + "% \u2014 encore un effort !"
+        }
+        score += pts
+        scoreEl.textContent = score
+        scoreEl.style.transform = "scale(1.3)"
+        setTimeout(function () { scoreEl.style.transform = "" }, 200)
+        // briefly show the target values
+        if (pts < 3) {
+          accEl.textContent = "H:" + targetH + " S:" + targetS + " L:" + targetL
+          accEl.style.color = "var(--muted)"
+        }
+        rd++
+        setTimeout(newRound, 900)
+      })
+
+      newRound()
+      return function () { live = false }
+    }
+    function openColorMix() {
+      openWindow({ title: "color mix", build: gameColorMix })
     }
 
     // ===== INIT =====
@@ -1841,119 +1832,68 @@ export default function App() {
     // ===== CHATBOT =====
     var QA = [
       {
-        k: ["bonjour", "salut", "hello", "coucou", "hey", "yo"],
-        a: "Salut ! \uD83D\uDC4B Je suis H\u00e9l\u00e8ne (enfin, mon avatar). Tu peux me demander ce que tu veux sur mon profil, mes projets ou mes dispos.",
+        k: ["bonjour", "salut", "hello", "coucou", "hey"],
+        a: "Salut ! Moi c'est H\u00e9l\u00e8ne \uD83D\uDC4B Product designer. Pose moi une question sur mon parcours, mes projets ou ma fa\u00e7on de travailler.",
+      },
+      {
+        k: ["qui", "pr\u00e9sente", "presente", "toi", "profil", "parcours"],
+        a: "H\u00e9l\u00e8ne, 34 ans, bas\u00e9e \u00e0 Paris. Product designer senior, en freelance depuis plus de 3 ans\u00a0: UI, UX, design systems et recherche utilisateur. Je con\u00e7ois des produits et je sais aussi les construire avec l\u2019IA, de l\u2019id\u00e9e au MVP. Toujours en qu\u00eate de nouveaux projets et de beaux challenges.",
+      },
+      {
+        k: ["projet", "projets", "travaux", "r\u00e9alisation", "r\u00e9alisations", "portfolio"],
+        a: "Ce que tu vois ici est une s\u00e9lection. Mes produits perso, con\u00e7us et construits en solo\u00a0: Genogy, en ligne, et Lexia, mon SaaS pour avocats, en construction. Des projets clients en design\u00a0: Custo, Horsenest, Skillgrid. Et des missions grand compte chez L\u2019Or\u00e9al et Stellantis. \u00c0 c\u00f4t\u00e9 de \u00e7a, j\u2019ai travaill\u00e9 pour Disneyland Paris, Chanel via Mazarine, Witco, Pulp et MyWay, entre autres. Clique sur les cartes pour le d\u00e9tail, et demande moi les autres si tu veux.",
       },
       {
         k: ["genogy", "g\u00e9nogramme", "genogramme"],
-        a: "Genogy, c'est mon b\u00e9b\u00e9 \uD83C\uDF7C : un SaaS pour cr\u00e9er des g\u00e9nogrammes cliniques en ligne. Je l'ai design\u00e9 puis vibe cod\u00e9 en solo (Claude Code + Figma) : landing, app, design system et un \u00e9diteur canvas costaud. C'est en ligne : genogy-app.com",
+        a: "Genogy, c'est mon SaaS pour cr\u00e9er des g\u00e9nogrammes cliniques : \u00e9diteur sur canvas, fiches membres, design system. Men\u00e9 seule du concept au produit en ligne, et construit avec l'IA. C'est en ligne sur genogy-app.com.",
       },
       {
-        k: ["projet", "project", "r\u00e9alisation", "portfolio", "travaill", "boss\u00e9"],
-        a: "Mes projets phares : Genogy (SaaS de g\u00e9nogrammes cliniques) et Lexia (logiciel de gestion pour cabinets d'avocats), deux SaaS que j'ai design\u00e9s puis vibe cod\u00e9s en solo (je ne suis pas dev, je sais vibe coder). Plus des outils internes chez L'Or\u00e9al (R&I) et la refonte Finance & Services de Stellantis. Clique sur les frames du canvas pour les voir !",
+        k: ["lexia", "avocat"],
+        a: "Lexia, c'est mon SaaS pour les avocats, que je fonde en solo : marketplace pour trouver un avocat, gestion de cabinet, copilote IA. Je le porte de bout en bout, vision, design et construction avec l'IA. Il est en construction active.",
       },
       {
-        k: ["lexia", "avocat", "juridique", "cabinet", "droit", "facturation", "relance"],
-        a: "Lexia, c'est mon SaaS pour cabinets d'avocats : dossiers, agenda, feuille de temps, facturation conforme, et surtout des relances + r\u00e9sum\u00e9s de dossiers g\u00e9n\u00e9r\u00e9s par IA. Design\u00e9 puis vibe cod\u00e9 en solo (Claude Code + Figma).",
+        k: ["custo", "horsenest", "skillgrid", "client", "clients", "freelance"],
+        a: "En design pur pour des clients : Custo (emballages personnalis\u00e9s), Horsenest (gestion \u00e9questre) et Skillgrid (SaaS RH). Sur chacun j'ai port\u00e9 l'UX, l'UI et le design system, seule en freelance.",
       },
       {
-        k: ["ia", "intelligence", "claude", "vibe", "prototyp", "mvp", "no-code", "nocode"],
-        a: "L'IA est au c\u0153ur de ma m\u00e9thode : je prototype en Claude Code + Figma (MCP) et je livre un MVP cliquable sans attendre une \u00e9quipe de dev. Genogy et Lexia en sont la preuve vivante \uD83D\uDE80",
+        k: ["or\u00e9al", "loreal", "lor\u00e9al", "stellantis", "disney", "chanel", "grand compte"],
+        a: "J'ai aussi travaill\u00e9 pour des grands comptes : L'Or\u00e9al en R&I (app store interne, design system) et Stellantis (refonte d'une plateforme de gestion financi\u00e8re). Sous NDA, donc je montre le contexte et l'impact, et j'en parle avec plaisir en entretien.",
       },
       {
-        k: [
-          "dispo",
-          "disponible",
-          "cdi",
-          "cdd",
-          "embauche",
-          "recrut",
-          "poste",
-          "job",
-          "freelance",
-          "mission",
-        ],
-        a: "Je suis freelance (Supermalter sur Malt \u2B50), mais ouverte au CDD, CDI ou autre si le poste est int\u00e9ressant. Mon mail : hln.margary@gmail.com \uD83D\uDE0A",
+        k: ["ia", "build", "builder", "construis", "m\u00e9thode", "workflow", "comment tu travailles"],
+        a: "Mon plus : je construis ce que je con\u00e7ois, avec l'IA. Je passe de l'id\u00e9e au MVP cliquable sans attendre une \u00e9quipe de dev. Designer avant tout, mais capable d'aller jusqu'au produit. Genogy et Lexia en sont la preuve.",
       },
       {
-        k: [
-          "contact",
-          "mail",
-          "email",
-          "joindre",
-          "\u00e9crire",
-          "ecrire",
-          "malt",
-          "linkedin",
-        ],
-        a: "Le plus simple : hln.margary@gmail.com, ou via mon profil Malt (Supermalter \u2B50). Je r\u00e9ponds vite !",
+        k: ["comp\u00e9tence", "comp\u00e9tences", "skills", "expertise", "ce que tu sais faire"],
+        a: "UI, UX, design systems, recherche et tests utilisateurs, prototypage. Une vraie culture tech (formation HETIC, un pass\u00e9 front) qui m'aide \u00e0 parler le langage des \u00e9quipes. Et la capacit\u00e9 \u00e0 construire avec l'IA.",
       },
       {
-        k: [
-          "comp\u00e9tence",
-          "competence",
-          "skill",
-          "sais-tu",
-          "sais tu",
-          "fais-tu",
-          "fais tu",
-          "expertise",
-          "sp\u00e9ciali",
-        ],
-        a: "UI/UX de z\u00e9ro, refontes, design systems, audit & recherche UX, prototypes Figma pr\u00eats pour les devs\u2026 et tout le volet design \u00d7 IA / vibe coding.",
+        k: ["exp\u00e9rience", "cv", "o\u00f9 tu as travaill\u00e9", "entreprises"],
+        a: "J'ai travaill\u00e9 pour L'Or\u00e9al, Stellantis, Disneyland Paris et Chanel via Mazarine, plus pas mal de SaaS et de startups. Toujours du design produit, souvent avec des design systems.",
       },
       {
-        k: ["loreal", "or\u00e9al", "oreal"],
-        a: "Chez L'Or\u00e9al (R&I), j'ai con\u00e7u des outils internes pendant ~14 mois : parcours, interfaces, design system, en lien direct avec les devs et les PM.",
+        k: ["dispo", "disponible", "recrutement", "embauche", "mission", "cdi", "cdd"],
+        a: "Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance, si le projet est int\u00e9ressant. Je suis \u00e0 Paris, en hybride.",
       },
       {
-        k: ["stellantis", "voiture", "auto"],
-        a: "Pour Stellantis, j'ai men\u00e9 la refonte du site Finance & Services : utilisabilit\u00e9, identit\u00e9 visuelle et parcours repens\u00e9s.",
+        k: ["contact", "mail", "email", "joindre", "\u00e9crire"],
+        a: "Le plus simple : hln.margary@gmail.com. Tu me trouves aussi sur Malt.",
       },
       {
-        k: [
-          "qui",
-          "pr\u00e9sente",
-          "presente",
-          "toi",
-          "parle-moi de toi",
-          "ton parcours",
-          "background",
-        ],
-        a: "Product Designer senior bas\u00e9e \u00e0 Paris. Je ne suis pas d\u00e9veloppeuse, mais je sais vibe coder : je passe du design au produit fonctionnel avec l'IA (Claude Code + Figma). C'est mon coup d'avance.",
+        k: ["paris", "o\u00f9", "localisation", "ville", "t\u00e9l\u00e9travail", "hybride"],
+        a: "Je suis \u00e0 Paris, en hybride, avec un peu de t\u00e9l\u00e9travail (j'ai un petit chien \u00e0 la maison \uD83D\uDC36).",
       },
       {
-        k: [
-          "paris",
-          "o\u00f9",
-          "habite",
-          "localis",
-          "ville",
-          "remote",
-          "t\u00e9l\u00e9travail",
-          "teletravail",
-        ],
-        a: "Je suis bas\u00e9e \u00e0 Paris, en t\u00e9l\u00e9travail la plupart du temps (et mobile pour les rencontres qui comptent).",
+        k: ["hobby", "hobbies", "passion", "int\u00e9r\u00eat", "int\u00e9r\u00eats", "en dehors", "perso"],
+        a: "En dehors du design : la cuisine \uD83C\uDF73, les voyages \u2708\uFE0F et l'IA \uD83E\uDD16.",
       },
       {
-        k: [
-          "passion",
-          "aime",
-          "hobby",
-          "loisir",
-          "int\u00e9r\u00eat",
-          "interet",
-          "centre",
-        ],
-        a: "En dehors du design : cuisine, voyages, Paris\u2026 et l'IA, forc\u00e9ment \uD83E\uDD16",
-      },
-      {
-        k: ["merci", "thanks", "top", "g\u00e9nial", "genial", "cool", "parfait"],
-        a: "Avec plaisir ! \u2726 Si tu veux aller plus loin, mon mail : hln.margary@gmail.com",
+        k: ["merci", "thanks", "top", "super"],
+        a: "Avec plaisir \uD83D\uDE0A N'h\u00e9site pas si tu as d'autres questions.",
       },
     ]
     var FALLBACK =
-      "Bonne question ! Pour \u00eatre s\u00fbre de bien y r\u00e9pondre, le mieux c'est de m'\u00e9crire directement : hln.margary@gmail.com \uD83D\uDE0A"
+      "Bonne question ! Je n'ai pas de r\u00e9ponse toute pr\u00eate l\u00e0 dessus. Demande moi plut\u00f4t mon parcours, mes projets, ma fa\u00e7on de travailler avec l'IA, ma dispo, ou comment me contacter."
     function answer(t) {
       t = " " + t.toLowerCase() + " "
       for (var i = 0; i < QA.length; i++) {
@@ -1969,6 +1909,9 @@ export default function App() {
       msgs = $("#chatmsgs"),
       input = $("#chatin"),
       opened = false
+    msgs.innerHTML = ""
+    panel.classList.remove("show")
+    btn.classList.remove("open")
     function push(txt, who) {
       var d = document.createElement("div")
       d.className = "cmsg " + who
@@ -1995,7 +1938,7 @@ export default function App() {
       btn.classList.toggle("open", opened)
       if (opened && !msgs.childNodes.length) {
         push(
-          "Salut ! \uD83D\uDC4B Je suis H\u00e9l\u00e8ne (enfin, mon avatar). Tu peux me demander : mes projets, mes outils, mes dispos\u2026",
+          "Salut ! Moi c'est H\u00e9l\u00e8ne \uD83D\uDC4B Product designer. Pose moi une question sur mon parcours, mes projets ou ma fa\u00e7on de travailler.",
           "bot"
         )
       }
@@ -2022,13 +1965,14 @@ export default function App() {
       }
     })
     var CHIPS = [
-      "Tes projets ?",
-      "C'est quoi Genogy ?",
-      "Tu utilises l'IA ?",
+      "Qui es tu ?",
+      "Tes projets",
+      "Design et IA",
       "Tu es dispo ?",
-      "Comment te contacter ?",
+      "Te contacter",
     ]
     var chipBox = $("#chatchips")
+    chipBox.innerHTML = ""
     CHIPS.forEach(function (c) {
       var b = document.createElement("button")
       b.className = "chip"
@@ -2040,16 +1984,109 @@ export default function App() {
     })
 
     applyView()
-    setTimeout(function () {
-      fitAll()
-      var bo = $("#boot")
-      if (bo) {
-        bo.style.opacity = "0"
-        setTimeout(function () {
-          bo.remove()
-        }, 600)
+
+    // ===== GLOBAL LOFI AUDIO =====
+    var lofiAudio = new Audio(LOFI_SRC)
+    lofiAudio.loop = true
+    lofiAudio.volume = 0.5
+    var lofiPlaying = false
+    var lofiSyncCallbacks = []
+    function toggleLofi() {
+      if (lofiPlaying) {
+        lofiAudio.pause()
+        lofiPlaying = false
+      } else {
+        lofiAudio.play().catch(function () {})
+        lofiPlaying = true
       }
-    }, 900)
+      lofiSyncCallbacks.forEach(function (cb) { cb() })
+    }
+
+    // === Boot animation ===
+    ;(function () {
+      var bo = $("#boot")
+      if (!bo) return
+      var canvas = $("#bootCanvas")
+      var pctEl = $("#bootPct")
+      var barFill = $("#bootBarFill")
+      var statusEl = $("#bootStatus")
+      var DUR = 3200
+
+      // dot grid on mini canvas
+      canvas.innerHTML = '<div class="boot-dots"></div>'
+
+      // mini skeleton frames
+      var frameColors = ["#1ABCFE", "#F24E1E", "#0ACF83", "#A259FF", "#FF7262", "#FF9F1C"]
+      var framePositions = [
+        { x: 12, y: 14, w: 52, h: 36 },
+        { x: 72, y: 8, w: 48, h: 40 },
+        { x: 130, y: 18, w: 50, h: 34 },
+        { x: 20, y: 62, w: 54, h: 32 },
+        { x: 82, y: 58, w: 46, h: 38 },
+        { x: 140, y: 60, w: 50, h: 34 },
+      ]
+      framePositions.forEach(function (fp, i) {
+        var d = document.createElement("div")
+        d.className = "boot-frame"
+        d.style.left = fp.x + "px"
+        d.style.top = fp.y + "px"
+        d.style.width = fp.w + "px"
+        d.style.height = fp.h + "px"
+        d.style.animationDelay = (200 + i * 180) + "ms"
+        d.innerHTML = '<span class="boot-frame-dot" style="background:' + frameColors[i] + '"></span>'
+          + '<span class="boot-frame-line"></span>'
+          + '<span class="boot-frame-line short"></span>'
+        canvas.appendChild(d)
+      })
+
+      // cursors
+      var cursors = [
+        { name: "Romane", col: "#7C8FB8", x: 95, y: 42, delay: 1200 },
+        { name: "Cl\u00e9ment", col: "#7FA89B", x: 155, y: 78, delay: 1600 },
+      ]
+      cursors.forEach(function (c) {
+        var cur = document.createElement("div")
+        cur.className = "boot-cursor"
+        cur.style.animationDelay = c.delay + "ms"
+        cur.style.left = c.x + "px"
+        cur.style.top = c.y + "px"
+        cur.innerHTML = '<svg width="12" height="16" viewBox="0 0 12 16"><path d="M1 1l3.5 14 2.5-5 5-1z" fill="' + c.col + '" stroke="#fff" stroke-width=".8"/></svg>'
+          + '<span class="boot-cursor-tag" style="background:' + c.col + '">' + c.name + '</span>'
+        canvas.appendChild(cur)
+      })
+
+      // status messages
+      var messages = [
+        { t: 0, msg: "j'ouvre le fichier" },
+        { t: 600, msg: "je pose les frames" },
+        { t: 1400, msg: "je r\u00e9veille les curseurs" },
+        { t: 2200, msg: "je branche le lofi" },
+        { t: 2800, msg: "c'est pr\u00eat" },
+      ]
+      messages.forEach(function (m) {
+        setTimeout(function () {
+          if (statusEl) statusEl.textContent = m.msg
+        }, m.t)
+      })
+
+      // percentage + progress bar
+      var start = performance.now()
+      function tick() {
+        var elapsed = performance.now() - start
+        var pct = Math.min(100, Math.round((elapsed / DUR) * 100))
+        if (pctEl) pctEl.textContent = pct + "%"
+        if (barFill) barFill.style.width = Math.min(100, elapsed / DUR * 100) + "%"
+        if (elapsed < DUR) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+
+      // exit
+      setTimeout(function () {
+        fitAll()
+        bo.classList.add("boot-exit")
+        setTimeout(function () { bo.remove() }, 700)
+      }, DUR + 200)
+    })()
 
     // ===== SIDE WIDGETS =====
     ;(function () {
@@ -2161,234 +2198,76 @@ export default function App() {
       }
 
       // ===== MUSIC =====
-      var TRACKS = [
-        { t: "Lofi maison", a: "ambiance g\u00e9n\u00e9r\u00e9e en direct", emoji: "\u2615", gen: true },
-        { t: "Morceau 1", a: "colle ton fichier ici", emoji: "\uD83C\uDFA7", src: "" },
-        { t: "Morceau 2", a: "colle ton fichier ici", emoji: "\uD83C\uDFB5", src: "" },
-        { t: "Morceau 3", a: "colle ton fichier ici", emoji: "\uD83C\uDFB6", src: "" },
-        { t: "Morceau 4", a: "colle ton fichier ici", emoji: "\uD83D\uDCBF", src: "" },
-        { t: "Morceau 5", a: "colle ton fichier ici", emoji: "\uD83D\uDCFB", src: "" },
-      ]
-      window.HELENE_PLAYLIST = TRACKS
-
       function buildMusic(api) {
-        var body = api.body,
-          vol = 0.7,
-          cur = -1,
-          playing = false
-        var audio = new Audio()
-        audio.preload = "none"
-        audio.volume = vol
-        var actx, master, genTimer, genNodes
-        function ensureCtx() {
-          if (!actx) {
-            actx = new (window.AudioContext || window.webkitAudioContext)()
-            master = actx.createGain()
-            master.gain.value = vol * 0.6
-            master.connect(actx.destination)
+        var body = api.body
+        var playing = lofiPlaying
+
+        function render() {
+          var st = playing ? ' playing' : ''
+          var playIcon = playing
+            ? '<svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="1" width="4" height="12" rx="1" fill="currentColor"/><rect x="9" y="1" width="4" height="12" rx="1" fill="currentColor"/></svg>'
+            : '<svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 1l9 6-9 6z" fill="currentColor"/></svg>'
+          body.innerHTML =
+            '<div class="lofi-player' + st + '">'
+            // -- main row: vinyl + info/eq + play button --
+            + '<div class="lofi-row">'
+            + '<svg class="lofi-disc' + (playing ? ' spinning' : '') + '" viewBox="0 0 80 80" fill="none">'
+            + '<circle cx="40" cy="40" r="38" fill="var(--text)" opacity=".1"/>'
+            + '<circle cx="40" cy="40" r="30" fill="none" stroke="var(--text)" stroke-width=".4" opacity=".1"/>'
+            + '<circle cx="40" cy="40" r="22" fill="none" stroke="var(--text)" stroke-width=".4" opacity=".1"/>'
+            + '<circle cx="40" cy="40" r="14" fill="none" stroke="var(--text)" stroke-width=".3" opacity=".08"/>'
+            + '<circle cx="40" cy="40" r="6" fill="var(--acc)" opacity=".35"/>'
+            + '<circle cx="40" cy="40" r="2" fill="var(--acc)" opacity=".6"/>'
+            + '</svg>'
+            + '<div class="lofi-mid">'
+            + '<div class="lofi-title">Lofi ambiance</div>'
+            + '<div class="lofi-status">' + (playing ? 'en lecture' : 'en pause') + '</div>'
+            + '<div class="lofi-eq">'
+            + '<span class="lofi-bar b1"></span>'
+            + '<span class="lofi-bar b2"></span>'
+            + '<span class="lofi-bar b3"></span>'
+            + '<span class="lofi-bar b4"></span>'
+            + '<span class="lofi-bar b5"></span>'
+            + '</div>'
+            + '</div>'
+            + '<button class="lofi-play" aria-label="' + (playing ? 'Couper le son' : 'Lancer le son') + '">' + playIcon + '</button>'
+            + '</div>'
+            // -- context line --
+            + '<div class="lofi-ctx">Pause lofi, le temps de regarder mes projets.</div>'
+            // -- volume slider (visible only when playing) --
+            + (playing
+              ? '<div class="lofi-vol"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg><input type="range" min="0" max="100" value="' + Math.round(lofiAudio.volume * 100) + '"></div>'
+              : '')
+            + '</div>'
+
+          var q = function (s) { return body.querySelector(s) }
+          q(".lofi-play").onclick = function (e) {
+            e.stopPropagation()
+            toggleLofi()
+            playing = lofiPlaying
+            render()
           }
-          if (actx.state === "suspended") actx.resume()
-        }
-        function startGen() {
-          ensureCtx()
-          var filt = actx.createBiquadFilter()
-          filt.type = "lowpass"
-          filt.frequency.value = 950
-          filt.connect(master)
-          var pad = actx.createGain()
-          pad.gain.value = 0
-          pad.connect(filt)
-          var oscs = [130.81, 164.81, 196.0].map(function (f) {
-            var o = actx.createOscillator()
-            o.type = "sine"
-            o.frequency.value = f
-            o.connect(pad)
-            o.start()
-            return o
-          })
-          pad.gain.setTargetAtTime(0.1, actx.currentTime, 1.6)
-          var scale = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25]
-          genTimer = setInterval(function () {
-            if (Math.random() < 0.62) {
-              var f = scale[Math.floor(Math.random() * scale.length)]
-              var o = actx.createOscillator()
-              o.type = "triangle"
-              o.frequency.value = f
-              var g = actx.createGain()
-              g.gain.value = 0
-              o.connect(g)
-              g.connect(filt)
-              var n = actx.currentTime
-              g.gain.linearRampToValueAtTime(0.16, n + 0.02)
-              g.gain.exponentialRampToValueAtTime(0.0008, n + 1.4)
-              o.start(n)
-              o.stop(n + 1.5)
+          var volInput = q(".lofi-vol input")
+          if (volInput) {
+            volInput.oninput = function () {
+              lofiAudio.volume = this.value / 100
             }
-          }, 650)
-          genNodes = { oscs: oscs, pad: pad }
-        }
-        function stopGen() {
-          if (genTimer) {
-            clearInterval(genTimer)
-            genTimer = null
-          }
-          if (genNodes && actx) {
-            try {
-              genNodes.pad.gain.setTargetAtTime(0, actx.currentTime, 0.2)
-              var o = genNodes.oscs
-              setTimeout(function () {
-                o.forEach(function (x) {
-                  try {
-                    x.stop()
-                  } catch (e) {}
-                })
-              }, 450)
-            } catch (e) {}
-            genNodes = null
           }
         }
 
-        body.innerHTML =
-          '<div class="swm-top"><div class="swm-cov">\u2615</div><div class="swm-meta"><div class="swm-t">\u2014</div><div class="swm-a">\u2014</div></div></div>' +
-          '<div class="swm-bar"><i></i></div><div class="swm-time"><span class="swm-cur">0:00</span><span class="swm-dur">0:00</span></div>' +
-          '<div class="swm-ctrl"><button class="prev" title="Pr\u00e9c\u00e9dent">&#9198;</button><button class="play" title="Lecture">&#9654;</button><button class="next" title="Suivant">&#9197;</button></div>' +
-          '<div class="swm-vol"><span>\uD83D\uDD0A</span><input type="range" min="0" max="100" value="70"></div>' +
-          '<div class="swm-list"></div>' +
-          '<div class="swm-hint">\uD83D\uDC49 Pour mettre tes morceaux : \u00e9dite <code>window.HELENE_PLAYLIST</code> (titre, artiste, <code>src</code>) ou colle un lien audio. Le 1er est une ambiance g\u00e9n\u00e9r\u00e9e, sans fichier.</div>'
-        var q = function (s) {
-          return body.querySelector(s)
-        }
-        var cov = q(".swm-cov"),
-          tEl = q(".swm-t"),
-          aEl = q(".swm-a"),
-          bar = q(".swm-bar"),
-          fillEl = q(".swm-bar i"),
-          tCur = q(".swm-cur"),
-          tDur = q(".swm-dur"),
-          btnPlay = q(".play"),
-          L = q(".swm-list")
-        function fmt(s) {
-          s = Math.floor(s || 0)
-          return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2)
-        }
-        function icon() {
-          btnPlay.innerHTML = playing ? "&#10074;&#10074;" : "&#9654;"
-        }
-        function live(b) {
-          bar.classList.toggle("live", b)
-          if (b) {
-            tCur.textContent = "live"
-            tDur.textContent = "\u221e"
-            fillEl.style.width = ""
-          } else {
-            tCur.textContent = "0:00"
-            tDur.textContent = "0:00"
-            fillEl.style.width = "0"
+        render()
+
+        // Sync if toggled externally
+        function externalSync() {
+          if (playing !== lofiPlaying) {
+            playing = lofiPlaying
+            render()
           }
         }
-        function renderList() {
-          L.innerHTML = ""
-          TRACKS.forEach(function (k, i) {
-            var r = el("div", "swm-row" + (i === cur ? " act" : ""))
-            r.innerHTML =
-              '<span class="e">' +
-              k.emoji +
-              '</span><span class="nm">' +
-              k.t +
-              " <small>" +
-              k.a +
-              "</small></span>"
-            r.onclick = function () {
-              play(i)
-            }
-            L.appendChild(r)
-          })
-        }
-        function setMeta() {
-          var k = TRACKS[cur]
-          cov.textContent = k.emoji
-          tEl.textContent = k.t
-          aEl.textContent = k.a
-        }
-        function stopAll() {
-          try {
-            audio.pause()
-          } catch (e) {}
-          stopGen()
-        }
-        function play(i) {
-          stopAll()
-          cur = i
-          var k = TRACKS[i]
-          setMeta()
-          renderList()
-          if (k.gen) {
-            live(true)
-            startGen()
-            playing = true
-          } else if (k.src) {
-            live(false)
-            audio.src = k.src
-            audio.currentTime = 0
-            audio.play().catch(function () {})
-            playing = true
-          } else {
-            live(false)
-            aEl.textContent = "ajoute un fichier (window.HELENE_PLAYLIST)"
-            playing = false
-          }
-          icon()
-        }
-        function toggle() {
-          if (cur < 0) {
-            play(0)
-            return
-          }
-          var k = TRACKS[cur]
-          if (playing) {
-            if (k.gen) stopGen()
-            else audio.pause()
-            playing = false
-          } else {
-            if (k.gen) startGen()
-            else if (k.src) audio.play().catch(function () {})
-            playing = true
-          }
-          icon()
-        }
-        audio.addEventListener("timeupdate", function () {
-          if (!audio.duration || bar.classList.contains("live")) return
-          fillEl.style.width = (audio.currentTime / audio.duration) * 100 + "%"
-          tCur.textContent = fmt(audio.currentTime)
-          tDur.textContent = fmt(audio.duration)
-        })
-        audio.addEventListener("ended", function () {
-          play((cur + 1) % TRACKS.length)
-        })
-        bar.addEventListener("click", function (e) {
-          if (!audio.duration || bar.classList.contains("live")) return
-          var r = bar.getBoundingClientRect()
-          audio.currentTime =
-            ((e.clientX - r.left) / r.width) * audio.duration
-        })
-        q(".play").onclick = toggle
-        q(".prev").onclick = function () {
-          play((cur <= 0 ? TRACKS.length : cur) - 1)
-        }
-        q(".next").onclick = function () {
-          play((cur + 1) % TRACKS.length)
-        }
-        q(".swm-vol input").oninput = function () {
-          vol = this.value / 100
-          audio.volume = vol
-          if (master) master.gain.value = vol * 0.6
-        }
-        renderList()
-        cur = 0
-        setMeta()
-        renderList()
+        lofiSyncCallbacks.push(externalSync)
         api.el.__cleanup = function () {
-          stopAll()
+          var idx = lofiSyncCallbacks.indexOf(externalSync)
+          if (idx >= 0) lofiSyncCallbacks.splice(idx, 1)
         }
       }
 
@@ -2396,163 +2275,429 @@ export default function App() {
       function buildTennis(api) {
         var body = api.body
         body.innerHTML =
-          '<div class="swt-sc">Toi <b class="me">0</b> &nbsp;\u2014&nbsp; <b class="op">0</b> Adversaire</div><canvas class="swt-c" height="150"></canvas><div class="swt-cap">\uD83C\uDFBE Roland Garros (pour de faux). \u00c7a joue tout seul, profite.</div>'
+          '<div class="swr-card"><div class="swr-ctx"><div class="swr-ctx-title">Pause tennis</div><div class="swr-ctx-sub">J\u2019aime travailler avec un match en fond. Petit clin d\u2019\u0153il\u00a0: un mini jeu, juste pour l\u2019ambiance.</div></div></div><div class="swt-sc">Toi <b class="me">0</b> &nbsp;\u2014&nbsp; <b class="op">0</b> IA</div><canvas class="swt-c" height="150"></canvas><div class="swt-cap">\uD83C\uDFBE Souris, doigt ou touches \u2191\u2193 pour jouer \u00b7 premier \u00e0 7</div>'
         var cv = body.querySelector("canvas"),
           ctx = cv.getContext("2d")
         var meEl = body.querySelector(".me"),
           opEl = body.querySelector(".op")
-        var W,
-          H,
-          ball,
-          pl,
-          pr,
-          ph,
-          me = 0,
-          op = 0,
-          raf,
-          ploff = 0,
-          proff = 0,
-          tk = 0
-        function size() {
-          cv.width = cv.clientWidth || 260
-          cv.height = api.el.classList.contains("lg") ? 230 : 150
-          W = cv.width
-          H = cv.height
-          ph = H * 0.22
-          if (!ball) reset(1)
+        var capEl = body.querySelector(".swt-cap")
+        var W, H, dpr,
+          ball, pl, pr, ph,
+          me = 0, op = 0, raf, tk = 0,
+          padM = 10, pw = 6, BR = 5,
+          playerTarget, started = false,
+          paused = false, gameOver = false,
+          WIN_SCORE = 7, rallies = 0
+
+        // keyboard state
+        var keyUp = false, keyDown = false
+        function onKeyDown(e) {
+          if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") { keyUp = true; e.preventDefault() }
+          if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") { keyDown = true; e.preventDefault() }
+          // restart on Enter/Space after game over
+          if (gameOver && (e.key === "Enter" || e.key === " ")) { restartMatch(); e.preventDefault() }
         }
-        function reset(d) {
-          ball = {
-            x: W / 2,
-            y: H / 2,
-            vx: 2.3 * d,
-            vy: (Math.random() * 2 - 1) * 1.7,
+        function onKeyUp(e) {
+          if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keyUp = false
+          if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keyDown = false
+        }
+        window.addEventListener("keydown", onKeyDown)
+        window.addEventListener("keyup", onKeyUp)
+
+        // impact ripples + particles
+        var ripples = []
+        function addRipple(x, y) { ripples.push({ x: x, y: y, r: 0, a: 1 }) }
+
+        var particles = []
+        function addParticles(x, y, count) {
+          for (var i = 0; i < count; i++) {
+            var ang = Math.random() * Math.PI * 2
+            var spd = 1 + Math.random() * 2.5
+            particles.push({ x: x, y: y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd, life: 1 })
           }
-          pl = { y: H / 2 }
-          pr = { y: H / 2 }
         }
-        function draw() {
-          ctx.fillStyle = "#3f7d4e"
+
+        // screen flash
+        var flashAlpha = 0
+
+        // squash state
+        var squash = { sx: 1, sy: 1, t: 0 }
+        function doSquash(dx, dy) {
+          if (Math.abs(dx) > Math.abs(dy)) { squash.sx = 0.6; squash.sy = 1.4 }
+          else { squash.sx = 1.4; squash.sy = 0.6 }
+          squash.t = 6
+        }
+
+        // trail
+        var trail = []
+
+        function popScore(el) {
+          el.classList.add("pop")
+          setTimeout(function () { el.classList.remove("pop") }, 200)
+        }
+
+        function size() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2)
+          var cw = cv.clientWidth || 340
+          var ch = api.el.classList.contains("lg") ? 320 : 220
+          cv.width = cw * dpr
+          cv.height = ch * dpr
+          cv.style.width = cw + "px"
+          cv.style.height = ch + "px"
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+          W = cw; H = ch
+          ph = H * 0.22
+          if (!ball) { playerTarget = H / 2; resetBall(1) }
+        }
+
+        function resetBall(d) {
+          started = false
+          ball = { x: W / 2, y: H / 2, vx: 0, vy: 0 }
+          pl = pl || { y: H / 2 }
+          pr = pr || { y: H / 2 }
+          trail = []
+          rallies = 0
+          if (!gameOver) {
+            setTimeout(function () {
+              var baseSpd = 2.8 + Math.min((me + op) * 0.05, 0.8)
+              ball.vx = baseSpd * d
+              ball.vy = (Math.random() * 2 - 1) * 1.8
+              started = true
+            }, 700)
+          }
+        }
+
+        function restartMatch() {
+          me = 0; op = 0; gameOver = false
+          meEl.textContent = "0"; opEl.textContent = "0"
+          capEl.textContent = "\uD83C\uDFBE Souris, doigt ou touches \u2191\u2193 pour jouer \u00b7 premier \u00e0 7"
+          resetBall(1)
+        }
+
+        // AI difficulty: gets harder as score progresses
+        var aiError = 0, aiChangeTk = 0
+        function updateAI() {
+          var difficulty = Math.min((me + op) / 14, 1) // 0 to 1
+          var aiSpeed = 2.2 + difficulty * 1.6
+          var errorRange = ph * (0.45 - difficulty * 0.2)
+          if (aiChangeTk <= 0) {
+            aiError = (Math.random() * 2 - 1) * errorRange
+            aiChangeTk = 40 + Math.random() * 60
+          }
+          aiChangeTk--
+          var target = ball.y + aiError
+          var spd = ball.vx > 0 ? aiSpeed : aiSpeed * 0.3
+          var dy = target - pr.y
+          var ease = 0.08 + difficulty * 0.06
+          pr.y += Math.max(-spd, Math.min(spd, dy * ease))
+          pr.y = Math.max(ph / 2 + 4, Math.min(H - ph / 2 - 4, pr.y))
+        }
+
+        // --- mouse / touch control ---
+        function getY(e) {
+          var rect = cv.getBoundingClientRect()
+          var clientY = e.touches ? e.touches[0].clientY : e.clientY
+          return (clientY - rect.top) * (H / rect.height)
+        }
+        function onMove(e) {
+          playerTarget = getY(e)
+          e.preventDefault()
+        }
+        cv.addEventListener("pointermove", onMove)
+        cv.addEventListener("touchmove", onMove, { passive: false })
+        // restart on canvas click after game over
+        cv.addEventListener("click", function () { if (gameOver) restartMatch() })
+
+        // --- drawing ---
+        function drawCourt() {
+          var grad = ctx.createLinearGradient(0, 0, W, H)
+          grad.addColorStop(0, "#C2613A")
+          grad.addColorStop(0.5, "#B8552F")
+          grad.addColorStop(1, "#C46840")
+          ctx.fillStyle = grad
           ctx.fillRect(0, 0, W, H)
-          ctx.strokeStyle = "rgba(255,255,255,.55)"
-          ctx.setLineDash([5, 7])
+          // grain texture
+          ctx.fillStyle = "rgba(0,0,0,.04)"
+          for (var i = 0; i < 80; i++) {
+            ctx.fillRect((i * 97 + 13) % W, (i * 53 + 7) % H, 1, 1)
+          }
+          var m = 8
+          ctx.strokeStyle = "rgba(255,255,255,.85)"
+          ctx.lineWidth = 1.5
+          ctx.strokeRect(m, m, W - m * 2, H - m * 2)
+          var sX = W * 0.28, sX2 = W * 0.72
           ctx.beginPath()
-          ctx.moveTo(W / 2, 0)
-          ctx.lineTo(W / 2, H)
+          ctx.moveTo(sX, m); ctx.lineTo(sX, H - m)
+          ctx.moveTo(sX2, m); ctx.lineTo(sX2, H - m)
           ctx.stroke()
-          ctx.setLineDash([])
-          ctx.fillStyle = "#fff"
-          ctx.fillRect(7, pl.y - ph / 2, 4, ph)
-          ctx.fillRect(W - 11, pr.y - ph / 2, 4, ph)
-          ctx.fillStyle = "#e9ff66"
           ctx.beginPath()
-          ctx.arc(ball.x, ball.y, 4, 0, 7)
-          ctx.fill()
+          ctx.moveTo(sX, H / 2); ctx.lineTo(sX2, H / 2)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(W / 2, m); ctx.lineTo(W / 2, m + 6)
+          ctx.moveTo(W / 2, H - m); ctx.lineTo(W / 2, H - m - 6)
+          ctx.stroke()
+          // net
+          ctx.save()
+          ctx.strokeStyle = "rgba(255,255,255,.55)"
+          ctx.lineWidth = 2; ctx.setLineDash([3, 4])
+          ctx.beginPath(); ctx.moveTo(W / 2, 2); ctx.lineTo(W / 2, H - 2); ctx.stroke()
+          ctx.setLineDash([])
+          // net posts
+          ctx.fillStyle = "rgba(255,255,255,.8)"
+          ctx.fillRect(W / 2 - 2, 0, 4, 6)
+          ctx.fillRect(W / 2 - 2, H - 6, 4, 6)
+          ctx.restore()
         }
+
+        function drawPaddle(x, y, w, h, col) {
+          var r = 3
+          ctx.beginPath()
+          ctx.moveTo(x + r, y)
+          ctx.arcTo(x + w, y, x + w, y + h, r)
+          ctx.arcTo(x + w, y + h, x, y + h, r)
+          ctx.arcTo(x, y + h, x, y, r)
+          ctx.arcTo(x, y, x + w, y, r)
+          ctx.closePath()
+          ctx.fillStyle = col || "#fff"
+          ctx.shadowColor = "rgba(0,0,0,.3)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2
+          ctx.fill()
+          ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0
+        }
+
+        function drawBall() {
+          // trail
+          ctx.save()
+          for (var i = 0; i < trail.length; i++) {
+            var t = trail[i], a = (i / trail.length) * 0.2
+            ctx.beginPath()
+            ctx.arc(t.x, t.y, BR * (0.4 + 0.6 * i / trail.length), 0, Math.PI * 2)
+            ctx.fillStyle = "rgba(212,227,78," + a.toFixed(2) + ")"
+            ctx.fill()
+          }
+          ctx.restore()
+
+          var bounce = Math.abs(Math.sin(tk * 0.15)) * 3
+          var shadowScale = 1 - bounce * 0.06
+          // shadow
+          ctx.save()
+          ctx.beginPath()
+          ctx.ellipse(ball.x, ball.y + 1, 5 * shadowScale, 3 * shadowScale, 0, 0, Math.PI * 2)
+          ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fill()
+          ctx.restore()
+          // squash
+          var bsx = 1, bsy = 1
+          if (squash.t > 0) {
+            squash.t--
+            var k = squash.t / 6
+            bsx = 1 + (squash.sx - 1) * k
+            bsy = 1 + (squash.sy - 1) * k
+          }
+          ctx.save()
+          ctx.translate(ball.x, ball.y - bounce)
+          ctx.scale(bsx, bsy)
+          ctx.beginPath(); ctx.arc(0, 0, BR, 0, Math.PI * 2)
+          ctx.fillStyle = "#D4E34E"; ctx.fill()
+          ctx.beginPath(); ctx.arc(-1.2, -1.5, 2, 0, Math.PI * 2)
+          ctx.fillStyle = "rgba(255,255,255,.45)"; ctx.fill()
+          ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 0.7
+          ctx.beginPath(); ctx.arc(0, 0, 4, -0.8, 0.8); ctx.stroke()
+          ctx.beginPath(); ctx.arc(0, 0, 4, Math.PI - 0.8, Math.PI + 0.8); ctx.stroke()
+          ctx.restore()
+        }
+
+        function drawRipples() {
+          for (var i = ripples.length - 1; i >= 0; i--) {
+            var rp = ripples[i]
+            rp.r += 1.5; rp.a -= 0.05
+            if (rp.a <= 0) { ripples.splice(i, 1); continue }
+            ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2)
+            ctx.strokeStyle = "rgba(255,255,255," + rp.a.toFixed(2) + ")"
+            ctx.lineWidth = 1.5; ctx.stroke()
+          }
+        }
+
+        function drawParticles() {
+          for (var i = particles.length - 1; i >= 0; i--) {
+            var p = particles[i]
+            p.x += p.vx; p.y += p.vy; p.life -= 0.03
+            p.vx *= 0.97; p.vy *= 0.97
+            if (p.life <= 0) { particles.splice(i, 1); continue }
+            ctx.beginPath(); ctx.arc(p.x, p.y, 1.5 * p.life, 0, Math.PI * 2)
+            ctx.fillStyle = "rgba(212,227,78," + p.life.toFixed(2) + ")"
+            ctx.fill()
+          }
+        }
+
+        function draw() {
+          drawCourt()
+          drawPaddle(padM, pl.y - ph / 2, pw, ph, "#fff")
+          drawPaddle(W - padM - pw, pr.y - ph / 2, pw, ph, "rgba(255,255,255,.7)")
+          if (!gameOver) drawBall()
+          drawRipples()
+          drawParticles()
+          // flash effect
+          if (flashAlpha > 0) {
+            ctx.fillStyle = "rgba(255,255,255," + flashAlpha.toFixed(2) + ")"
+            ctx.fillRect(0, 0, W, H)
+            flashAlpha -= 0.04
+          }
+          if (!started && !gameOver) {
+            ctx.fillStyle = "rgba(0,0,0,.3)"
+            ctx.fillRect(0, 0, W, H)
+            ctx.fillStyle = "#fff"; ctx.textAlign = "center"
+            ctx.font = '600 13px "Fraunces",serif'
+            ctx.fillText("Pr\u00eat ?", W / 2, H / 2)
+          }
+          if (gameOver) {
+            ctx.fillStyle = "rgba(0,0,0,.45)"
+            ctx.fillRect(0, 0, W, H)
+            ctx.textAlign = "center"
+            ctx.fillStyle = "#D4E34E"
+            ctx.font = '700 18px "Fraunces",serif'
+            ctx.fillText(me >= WIN_SCORE ? "Victoire !" : "Perdu !", W / 2, H / 2 - 8)
+            ctx.fillStyle = "rgba(255,255,255,.7)"
+            ctx.font = '400 12px "Inter",sans-serif'
+            ctx.fillText("Clic ou Entr\u00e9e pour rejouer", W / 2, H / 2 + 14)
+          }
+        }
+
+        // --- game loop ---
+        var kbSpeed = 4.5
         function step() {
           tk++
-          if (tk % 140 === 0) {
-            ploff = (Math.random() * 2 - 1) * ph * 0.9
-            proff = (Math.random() * 2 - 1) * ph * 0.9
+
+          // keyboard input
+          if (keyUp) playerTarget = Math.max(0, (playerTarget || pl.y) - kbSpeed)
+          if (keyDown) playerTarget = Math.min(H, (playerTarget || pl.y) + kbSpeed)
+
+          // player paddle follows target with easing
+          var dy = playerTarget - pl.y
+          pl.y += dy * 0.22
+          pl.y = Math.max(ph / 2 + 4, Math.min(H - ph / 2 - 4, pl.y))
+
+          if (started && !gameOver) {
+            // AI
+            updateAI()
+            rallies++
+
+            ball.x += ball.vx; ball.y += ball.vy
+            // trail
+            trail.push({ x: ball.x, y: ball.y })
+            if (trail.length > 10) trail.shift()
+
+            // top/bottom bounce
+            if (ball.y < BR + 4) { ball.y = BR + 4; ball.vy *= -1; addRipple(ball.x, 4); doSquash(0, 1) }
+            if (ball.y > H - BR - 4) { ball.y = H - BR - 4; ball.vy *= -1; addRipple(ball.x, H - 4); doSquash(0, 1) }
+
+            // player paddle hit
+            var plX = padM + pw
+            if (ball.vx < 0 && ball.x - BR < plX && ball.x + BR > padM &&
+                ball.y > pl.y - ph / 2 - 2 && ball.y < pl.y + ph / 2 + 2) {
+              ball.x = plX + BR
+              var hitPos = (ball.y - pl.y) / (ph / 2) // -1 to 1
+              var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) + 0.15
+              var angle = hitPos * 0.75
+              ball.vx = Math.cos(angle) * speed
+              ball.vy = Math.sin(angle) * speed
+              addRipple(plX, ball.y); doSquash(1, 0); addParticles(plX, ball.y, 6)
+            }
+
+            // AI paddle hit
+            var prX = W - padM - pw
+            if (ball.vx > 0 && ball.x + BR > prX && ball.x - BR < W - padM &&
+                ball.y > pr.y - ph / 2 - 2 && ball.y < pr.y + ph / 2 + 2) {
+              ball.x = prX - BR
+              var hitPos2 = (ball.y - pr.y) / (ph / 2)
+              var speed2 = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) + 0.1
+              var angle2 = hitPos2 * 0.75
+              ball.vx = -Math.cos(angle2) * speed2
+              ball.vy = Math.sin(angle2) * speed2
+              addRipple(prX, ball.y); doSquash(1, 0); addParticles(prX, ball.y, 4)
+            }
+
+            // scoring
+            if (ball.x < -10) {
+              op++; opEl.textContent = op; popScore(opEl); flashAlpha = 0.3
+              if (op >= WIN_SCORE) { gameOver = true; capEl.textContent = "\uD83C\uDFBE Perdu " + me + "\u2013" + op + " \u00b7 clic ou Entr\u00e9e pour rejouer" }
+              else resetBall(1)
+            }
+            if (ball.x > W + 10) {
+              me++; meEl.textContent = me; popScore(meEl); flashAlpha = 0.3
+              if (me >= WIN_SCORE) { gameOver = true; capEl.textContent = "\uD83C\uDFBE Victoire " + me + "\u2013" + op + " ! Bien jou\u00e9 \uD83C\uDFC6" }
+              else resetBall(-1)
+            }
+
+            // speed cap (increases slightly with rallies)
+            var maxV = 5.5 + Math.min(rallies * 0.003, 2)
+            ball.vx = Math.max(-maxV, Math.min(maxV, ball.vx))
+            ball.vy = Math.max(-maxV, Math.min(maxV, ball.vy))
           }
-          ball.x += ball.vx
-          ball.y += ball.vy
-          if (ball.y < 4 || ball.y > H - 4) ball.vy *= -1
-          pl.y += Math.max(
-            -2.5,
-            Math.min(2.5, (ball.y + ploff - pl.y) * 0.1)
-          )
-          pr.y += Math.max(
-            -2.5,
-            Math.min(2.5, (ball.y + proff - pr.y) * 0.1)
-          )
-          if (
-            ball.vx < 0 &&
-            ball.x < 14 &&
-            Math.abs(ball.y - pl.y) < ph / 2 + 3
-          ) {
-            ball.vx = Math.abs(ball.vx) + 0.06
-            ball.vy += (ball.y - pl.y) * 0.05
-          }
-          if (
-            ball.vx > 0 &&
-            ball.x > W - 14 &&
-            Math.abs(ball.y - pr.y) < ph / 2 + 3
-          ) {
-            ball.vx = -(Math.abs(ball.vx) + 0.06)
-            ball.vy += (ball.y - pr.y) * 0.05
-          }
-          if (ball.x < -6) {
-            op++
-            opEl.textContent = op
-            reset(1)
-          }
-          if (ball.x > W + 6) {
-            me++
-            meEl.textContent = me
-            reset(-1)
-          }
+
           draw()
           raf = requestAnimationFrame(step)
         }
+
         size()
+        resetBall(1)
         raf = requestAnimationFrame(step)
+
         api.el.__resize = function () {
           var w = ball ? { x: ball.x / W, y: ball.y / H } : null
           size()
-          if (w && ball) {
-            ball.x = w.x * W
-            ball.y = w.y * H
-          }
+          if (w && ball) { ball.x = w.x * W; ball.y = w.y * H }
         }
         api.el.__cleanup = function () {
           cancelAnimationFrame(raf)
+          cv.removeEventListener("pointermove", onMove)
+          window.removeEventListener("keydown", onKeyDown)
+          window.removeEventListener("keyup", onKeyUp)
         }
       }
 
       // ===== RECETTES =====
       var RECIPES = [
         {
-          e: "\uD83C\uDF4B",
-          n: "P\u00e2tes au citron",
-          d: "Citron, parmesan, un peu de cr\u00e8me. Le r\u00e9confort express.",
-          m: "15 min \u00b7 facile",
+          e: "\uD83D\uDC1F",
+          n: "Ceviche de dorade",
+          d: "Ma recette soleil : dorade ultra fra\u00eeche, citron vert, oignon rouge, coriandre. Je pourrais en manger tous les jours.",
+          m: "20 min \u00b7 facile",
         },
         {
-          e: "\uD83C\uDF73",
-          n: "Shakshuka",
-          d: "Oeufs poch\u00e9s dans une sauce tomate \u00e9pic\u00e9e. Brunch parfait.",
-          m: "25 min \u00b7 facile",
-        },
-        {
-          e: "\uD83C\uDF5C",
-          n: "Ramen maison",
-          d: "Bouillon miso, oeuf mollet, nouilles. C\u00e2lin dans un bol.",
-          m: "40 min \u00b7 moyen",
-        },
-        {
-          e: "\uD83E\uDD58",
-          n: "Risotto champignons",
-          d: "Patience et louche par louche. Cr\u00e9meux garanti.",
-          m: "35 min \u00b7 moyen",
+          e: "\uD83E\uDD5F",
+          n: "Raviolis sichuanais",
+          d: "Pliage m\u00e9ditatif, sauce piment et vinaigre noir. Mon comfort food du dimanche soir.",
+          m: "1h \u00b7 avanc\u00e9",
         },
         {
           e: "\uD83C\uDF2E",
-          n: "Tacos al pastor",
-          d: "Porc marin\u00e9, ananas, coriandre. Soir\u00e9e garantie.",
-          m: "30 min \u00b7 moyen",
+          n: "Tortillas porc effiloch\u00e9",
+          d: "Porc fondant, salsa maison, un peu de guac. Le genre de plat o\u00f9 tout le monde se ress\u00e8rt.",
+          m: "3h (cuisson lente) \u00b7 moyen",
+        },
+        {
+          e: "\uD83C\uDF5D",
+          n: "P\u00e2tes alla vongole",
+          d: "Palourdes, ail, vin blanc, persil. Simple et parfait, comme en Italie.",
+          m: "25 min \u00b7 facile",
         },
         {
           e: "\uD83C\uDF70",
-          n: "G\u00e2teau au yaourt",
-          d: "Le classique sans balance. Le pot de yaourt comme mesure.",
-          m: "45 min \u00b7 facile",
+          n: "Cheesecake",
+          d: "Base sp\u00e9culoos, cr\u00e8me onctueuse, topping fruits rouges. Mon dessert signature pour les soir\u00e9es.",
+          m: "40 min + repos \u00b7 moyen",
         },
         {
-          e: "\uD83E\uDD57",
-          n: "Buddha bowl",
-          d: "Quinoa, avocat, pois chiches r\u00f4tis, sauce tahini.",
-          m: "20 min \u00b7 facile",
+          e: "\uD83D\uDC19",
+          n: "Poulpe grill\u00e9",
+          d: "Poulpe tendre, grill\u00e9 au dernier moment avec huile d\u2019olive et paprika. Go\u00fbt de vacances instantan\u00e9.",
+          m: "1h30 \u00b7 moyen",
+        },
+        {
+          e: "\uD83E\uDD6C",
+          n: "Rouleaux de printemps",
+          d: "Crevettes, vermicelles, menthe, cacahu\u00e8tes. Frais, l\u00e9ger, je les fais pour tous les ap\u00e9ros.",
+          m: "30 min \u00b7 facile",
         },
       ]
       window.HELENE_RECETTES = RECIPES
@@ -2560,7 +2705,7 @@ export default function App() {
         var body = api.body,
           last = -1
         body.innerHTML =
-          '<div class="swr-card"><div class="swr-e"></div><div class="swr-n"></div><div class="swr-d"></div><div class="swr-meta"></div><button class="swr-btn">\uD83C\uDFB2 Une autre</button></div>'
+          '<div class="swr-card"><div class="swr-ctx"><div class="swr-ctx-title">Pause cuisine</div><div class="swr-ctx-sub">Quand je ne design pas, je cuisine. Petit clin d\u2019\u0153il perso\u00a0: pioche une recette au hasard.</div></div><div class="swr-e"></div><div class="swr-n"></div><div class="swr-d"></div><div class="swr-meta"></div><button class="swr-btn">\uD83C\uDFB2 Une autre</button></div>'
         var e = body.querySelector(".swr-e"),
           n = body.querySelector(".swr-n"),
           d = body.querySelector(".swr-d"),
@@ -2584,27 +2729,32 @@ export default function App() {
 
       // ===== DOCK =====
       var dock = el("div", "sw-dock")
-      function addBtn(key, icon, label, fn) {
-        var b = el("button")
-        b.textContent = icon
+      function addBtn(key, icon, label, shortLabel, fn) {
+        var b = el("button", "dkb")
+        var ic = el("span", "dki")
+        ic.textContent = icon
+        var lb = el("span", "dkl")
+        lb.textContent = shortLabel
+        b.appendChild(ic)
+        b.appendChild(lb)
         b.title = label
         b.dataset.k = key
         b.onclick = fn
         dock.appendChild(b)
       }
-      addBtn("music", "\uD83C\uDFB5", "Player musique", function () {
-        makeWin("music", "\uD83C\uDFB5", "Player musique", buildMusic, {
+      addBtn("music", "\uD83C\uDFB5", "Lecteur lofi", "music", function () {
+        makeWin("music", "\uD83C\uDFB5", "Lecteur lofi", buildMusic, {
           w: 300,
           lw: 380,
         })
       })
-      addBtn("tennis", "\uD83C\uDFBE", "Mini tennis", function () {
+      addBtn("tennis", "\uD83C\uDFBE", "Mini tennis", "tennis", function () {
         makeWin("tennis", "\uD83C\uDFBE", "Mini tennis", buildTennis, {
-          w: 300,
-          lw: 460,
+          w: 380,
+          lw: 520,
         })
       })
-      addBtn("reci", "\uD83C\uDF73", "Recettes", function () {
+      addBtn("reci", "\uD83C\uDF73", "Recettes", "recettes", function () {
         makeWin("reci", "\uD83C\uDF73", "Recette surprise", buildRecettes, {
           w: 300,
           lw: 360,
@@ -2617,11 +2767,14 @@ export default function App() {
   return (
     <>
       <div id="boot">
-        <div className="logo">&#10038; MARGARY</div>
-        <div className="load">
-          <i></i>
+        <div className="boot-head">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#999" strokeWidth="1.2"/><rect x="4" y="4" width="4" height="3" rx="1" fill="#999"/><rect x="4" y="9" width="8" height="3" rx="1" fill="#999" opacity=".5"/></svg>
+          <span className="boot-file">portfolio.fig</span>
+          <span className="boot-pct" id="bootPct">0%</span>
         </div>
-        <div className="sub">OUVERTURE DU FICHIER…</div>
+        <div className="boot-canvas" id="bootCanvas"></div>
+        <div className="boot-bar"><div className="boot-bar-fill" id="bootBarFill"></div></div>
+        <div className="boot-status" id="bootStatus">j'ouvre le fichier</div>
       </div>
 
       <div id="viewport">
@@ -2654,7 +2807,24 @@ export default function App() {
         glisse pour te déplacer · molette pour zoomer · clique une frame
       </div>
 
-      <div id="palettes"></div>
+      <div id="tourVeil" style={{display:"none"}}></div>
+      <div id="tourOverlay" style={{display:"none"}}>
+        <div className="tour-bar">
+          <div className="tour-top">
+            <div className="tour-info">
+              <div id="tourCaption" className="tour-caption"></div>
+              <div id="tourCounter" className="tour-counter"></div>
+            </div>
+            <button id="tourQuit" className="tour-close" title="Quitter la visite">{"\u2715"}</button>
+          </div>
+          <div className="tour-progress-track"><div id="tourProgress" className="tour-progress-fill"></div></div>
+          <div className="tour-actions">
+            <button id="tourPrev" className="tour-btn">{"Pr\u00e9c\u00e9dent"}</button>
+            <button id="tourAuto" className="tour-auto" title="Lecture auto">{"\u25B6"}</button>
+            <button id="tourNext" className="tour-btn tour-btn-primary">{"Suivant"}</button>
+          </div>
+        </div>
+      </div>
 
       <div id="projModal">
         <div className="pm-back"></div>
@@ -2663,11 +2833,11 @@ export default function App() {
 
       <div id="chatbtn" title="Une question ?">
         <span className="label">Une question ? ✦</span>
-        <div id="botface" className="bot3d"></div>
+        <div id="botface"></div>
       </div>
       <div id="chatpanel">
         <div className="chathead">
-          <div id="bothead" className="chathav bot3d"></div>
+          <div id="bothead" className="chathav"></div>
           <div>
             <div className="chatname">
               Hélène <span className="chatdot"></span>
