@@ -235,7 +235,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .tbtn{min-height:44px;touch-action:manipulation}
 #projModal{padding:10px}
 .pm-panel{width:min(720px,98vw);max-height:92vh;border-radius:14px}
-.pm-close{width:44px;height:44px;font-size:18px}
+.pm-close{width:44px;height:44px;font-size:18px;touch-action:manipulation}
+.pm-head{position:sticky;top:0;z-index:2;padding:12px 10px}
+.sw-head button{width:44px;height:44px;border-radius:10px;font-size:18px;touch-action:manipulation}
+.sw-head{gap:4px;padding:6px 6px 6px 10px}
 #zoomc{left:10px;bottom:10px;padding:2px}
 #zoomc .pct{min-width:36px;font-size:10px}
 #zoomc button{min-width:36px;min-height:36px;font-size:14px}
