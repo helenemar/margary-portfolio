@@ -246,9 +246,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .pin{display:none}
 .dims{display:none}
 .frame{animation:none!important}
-.sw-dock{position:fixed;right:auto;left:50%;top:auto;bottom:82px;transform:translateX(-50%);flex-direction:row;gap:4px;background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--hair);border-radius:14px;padding:6px 10px;box-shadow:0 8px 24px -10px var(--shadow)}
-.sw-dock .dkb .dki{width:38px;height:38px;border-radius:12px;font-size:18px;border:none;background:transparent;box-shadow:none}
-.sw-dock .dkb .dkl{font-size:8px;margin-top:2px}
+.sw-dock{position:fixed;right:auto;left:50%;top:auto;bottom:env(safe-area-inset-bottom,8px);transform:translateX(-50%);flex-direction:row;gap:2px;background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--hair);border-radius:12px;padding:4px 6px;box-shadow:0 4px 14px -6px var(--shadow)}
+.sw-dock .dkb .dki{width:36px;height:36px;border-radius:10px;font-size:16px;border:none;background:transparent;box-shadow:none}
+.sw-dock .dkb .dkl{display:none}
 .sw-dock .dkb:hover .dki{transform:scale(1.08) translateX(0)}
 #botface{width:44px;height:68px;border-radius:12px}
 #chatbtn .label{right:52px;font-size:10px;padding:5px 9px;border-radius:8px}
