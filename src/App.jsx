@@ -39,12 +39,10 @@ import AV from "./assets/helene-photo.jpg"
 import SK_1 from "./assets/skillgrid-1-dashboard.png"
 import SK_2 from "./assets/skillgrid-2-organigramme.png"
 import SK_3 from "./assets/skillgrid-3-profil.png"
-import SK_4 from "./assets/skillgrid-4-matrice.png"
-import SK_5 from "./assets/skillgrid-5-creation-matrice.png"
-import SK_6 from "./assets/skillgrid-6-entretiens.png"
-import SK_7 from "./assets/skillgrid-7-creation-entretien.png"
-import SK_8 from "./assets/skillgrid-8-questions.png"
-import SK_9 from "./assets/skillgrid-9-resume.png"
+import SK_4 from "./assets/skillgrid-4-creation-matrice.png"
+import SK_5 from "./assets/skillgrid-5-entretiens.png"
+import SK_6 from "./assets/skillgrid-6-creation-entretien.png"
+import SK_7 from "./assets/skillgrid-7-questions.png"
 import HR_P1 from "./assets/HornestPlateforme1.png"
 import HR_P2 from "./assets/HornestPlateforme2.png"
 import HR_P3 from "./assets/HornestPlateforme3.png"
@@ -249,11 +247,9 @@ export default function App() {
           { img: SK_2, cap: "Organigramme" },
           { img: SK_3, cap: "Fiche collaborateur" },
           { img: SK_4, cap: "Matrice de compétences" },
-          { img: SK_5, cap: "Création d'une matrice" },
-          { img: SK_6, cap: "Suivi des entretiens" },
-          { img: SK_7, cap: "Création d'un entretien" },
-          { img: SK_8, cap: "Questions de l'entretien" },
-          { img: SK_9, cap: "Résumé d'entretien" },
+          { img: SK_5, cap: "Suivi des entretiens" },
+          { img: SK_6, cap: "Création d'un entretien" },
+          { img: SK_7, cap: "Questions de l'entretien" },
         ],
       },
       horsenest: {
