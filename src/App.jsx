@@ -461,7 +461,7 @@ export default function App() {
     // Stellantis
     addFrame({
       x: 1860,
-      y: 580,
+      y: 700,
       w: 460,
       h: 420,
       label: "<b>Stellantis</b>",
