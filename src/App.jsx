@@ -611,7 +611,7 @@ export default function App() {
     addFrame({
       proj: "assurvisor",
       x: 1840,
-      y: 1350,
+      y: 1500,
       w: 520,
       h: 540,
       label: "<b>Assurvisor</b> \u00b7 SaaS \u00b7 courtiers en assurance",
