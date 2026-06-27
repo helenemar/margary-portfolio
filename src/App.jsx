@@ -678,7 +678,8 @@ export default function App() {
       animateView(s, X, Y)
     }
     function fitAll() {
-      fitRect(worldBounds(), 0.82)
+      var mob = innerWidth <= 768
+      fitRect(worldBounds(), mob ? 0.72 : 0.82, { top: mob ? 50 : 44, bottom: mob ? 80 : 0 })
     }
 
     var anim = null

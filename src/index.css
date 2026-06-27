@@ -462,9 +462,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 /* mobile FAB – hidden on desktop */
 .mob-fab,.mob-fab-menu{display:none}
 @media(max-width:768px){
-.mob-fab{display:flex;align-items:center;justify-content:center;position:fixed;right:10px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:119;width:48px;height:48px;border-radius:50%;border:1px solid var(--hair);background:color-mix(in srgb,var(--elev) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:22px;cursor:pointer;box-shadow:0 8px 24px -8px var(--shadow);touch-action:manipulation;transition:transform .15s}
+.mob-fab{display:flex;align-items:center;justify-content:center;position:fixed;right:10px;top:54px;z-index:119;width:44px;height:44px;border-radius:50%;border:1px solid var(--hair);background:color-mix(in srgb,var(--elev) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:20px;cursor:pointer;box-shadow:0 8px 24px -8px var(--shadow);touch-action:manipulation;transition:transform .15s}
 .mob-fab:hover{transform:scale(1.08)}
-.mob-fab-menu{position:fixed;right:10px;bottom:calc(134px + env(safe-area-inset-bottom,0px));z-index:200;background:var(--elev);border:1px solid var(--hair);border-radius:14px;padding:6px;box-shadow:0 20px 50px -14px var(--shadow);flex-direction:column;gap:2px;min-width:160px;opacity:0;pointer-events:none;transform:translateY(8px) scale(.95);transition:opacity .15s,transform .15s}
+.mob-fab-menu{position:fixed;right:10px;top:104px;z-index:200;background:var(--elev);border:1px solid var(--hair);border-radius:14px;padding:6px;box-shadow:0 20px 50px -14px var(--shadow);flex-direction:column;gap:2px;min-width:160px;opacity:0;pointer-events:none;transform:translateY(-8px) scale(.95);transition:opacity .15s,transform .15s}
 .mob-fab-menu.open{display:flex;opacity:1;pointer-events:all;transform:none}
 .mob-fab-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:none;background:transparent;border-radius:10px;font:inherit;font-size:13px;color:var(--text);cursor:pointer;min-height:44px;touch-action:manipulation;transition:background .12s}
 .mob-fab-item:hover{background:color-mix(in srgb,var(--text) 8%,transparent)}
