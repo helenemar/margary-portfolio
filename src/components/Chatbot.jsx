@@ -50,7 +50,7 @@ const INTENTS = [
   {
     keys: ["dispo", "disponible", "freelance", "recrutement", "embauche", "mission", "cdi", "cdd"],
     reply:
-      "Ouverte aux opportunités, CDI, CDD ou freelance, si le projet est intéressant. Je suis à Paris, en hybride.",
+      "Ouverte aux opportunités, CDI, CDD ou freelance. Je suis à Paris, en hybride.",
   },
   {
     keys: ["contact", "mail", "email", "joindre", "écrire"],

@@ -226,7 +226,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .tour-short{display:inline}
 }
 @media(max-width:768px){
-.pmore{min-height:44px;display:flex;align-items:center;justify-content:center;font-size:13px;padding:10px 18px;touch-action:manipulation}
+.pmore{min-height:50px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;padding:12px 22px;border-radius:10px;touch-action:manipulation}
 .ab-actions a{min-height:44px;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 .tour-btn{min-height:44px;padding:10px 18px;touch-action:manipulation}
 .tour-auto{width:44px;height:44px;touch-action:manipulation}
@@ -249,6 +249,11 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .sw-dock{display:none!important}
 #botface{width:40px;height:56px;border-radius:10px}
 #chatbtn .label{right:48px;font-size:10px;padding:5px 9px;border-radius:8px}
+.pm-mobile-grid{display:flex;flex-direction:column;gap:16px;grid-template-columns:none}
+.pm-mobile-grid .pm-shot{border-radius:10px;border:1px solid var(--hair);overflow:hidden}
+.pm-mobile-grid .pm-shot img{width:100%;max-height:none;object-fit:contain}
+.pm-gallery{gap:16px}
+.pm-tab-panel{gap:16px}
 }
 
 /* window manager + games (Arcade) */

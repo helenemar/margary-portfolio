@@ -512,7 +512,7 @@ export default function App() {
         + '<h3 class="ab-title">Product designer avant tout.</h3>'
         + '<p class="ab-pitch">Senior en UI, UX, design systems et recherche utilisateur. Je sais aussi construire ce que je con\u00e7ois, avec l\'IA, de l\'id\u00e9e au MVP cliquable. Designer d\'abord, IA builder en bonus.</p>'
         + '<div class="ab-infos">'
-        + '<div class="ab-info"><span class="ab-dot"></span><div><b>Dispo</b><span class="ab-detail">Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance, si le projet est int\u00e9ressant.</span></div></div>'
+        + '<div class="ab-info"><span class="ab-dot"></span><div><b>Dispo</b><span class="ab-detail">Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance.</span></div></div>'
         + '<div class="ab-info"><span class="ab-pin">\uD83D\uDCCD</span><div><b>Paris</b><span class="ab-detail">T\u00e9l\u00e9travail ou hybride (j\'ai un petit chien \u00e0 la maison \uD83D\uDC36).</span></div></div>'
         + '</div>'
         + '<div class="ab-chips"><span>\uD83C\uDF73 cuisine</span><span>\u2708\uFE0F voyages</span><span>\uD83E\uDD16 IA</span></div>'
@@ -1969,7 +1969,7 @@ export default function App() {
       },
       {
         k: ["dispo", "disponible", "recrutement", "embauche", "mission", "cdi", "cdd"],
-        a: "Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance, si le projet est int\u00e9ressant. Je suis \u00e0 Paris, en hybride.",
+        a: "Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance. Je suis \u00e0 Paris, en hybride.",
       },
       {
         k: ["contact", "mail", "email", "joindre", "\u00e9crire"],
