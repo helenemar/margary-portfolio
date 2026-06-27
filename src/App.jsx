@@ -675,7 +675,20 @@ export default function App() {
     }
     function fitAll() {
       var mob = innerWidth <= 768
-      fitRect(worldBounds(), mob ? 0.72 : 0.82, { top: mob ? 50 : 44, bottom: mob ? 80 : 0 })
+      if (!mob) { fitRect(worldBounds(), 0.82); return }
+      // mobile: explicit centering with real insets
+      var r = worldBounds()
+      var topInset = 54   // TopBar 44 + 10px margin
+      var botInset = 90   // chatbot + safe area
+      var sideMargin = 10
+      var usableW = innerWidth - sideMargin * 2
+      var usableH = innerHeight - topInset - botInset
+      var s = Math.min(usableW / r.w, usableH / r.h) * 0.88
+      s = clamp(s, 0.05, 2.4)
+      var X = innerWidth / 2 - (r.x + r.w / 2) * s
+      var centerY = topInset + usableH / 2
+      var Y = centerY - (r.y + r.h / 2) * s
+      animateView(s, X, Y)
     }
 
     var anim = null
@@ -1944,7 +1957,7 @@ export default function App() {
       },
       {
         k: ["ia", "build", "builder", "construis", "m\u00e9thode", "workflow", "comment tu travailles"],
-        a: "Mon plus : je construis ce que je con\u00e7ois, avec l'IA. Je passe de l'id\u00e9e au MVP cliquable sans attendre une \u00e9quipe de dev. Designer avant tout, mais capable d'aller jusqu'au produit. Genogy et Lexia en sont la preuve.",
+        a: "Mon m\u00e9tier, c\u2019est le design produit\u00a0: UX, UI, design systems, recherche. En plus de \u00e7a, je sais construire ce que je con\u00e7ois avec l\u2019IA, jusqu\u2019\u00e0 un MVP cliquable. \u00c7a me permet de tester une id\u00e9e vite, de mieux parler le langage des \u00e9quipes tech, et de collaborer plus facilement avec les devs. Designer avant tout, builder en bonus.",
       },
       {
         k: ["comp\u00e9tence", "comp\u00e9tences", "skills", "expertise", "ce que tu sais faire"],
@@ -2848,7 +2861,7 @@ export default function App() {
       // ===== MOBILE FAB (replaces dock on ≤768px) =====
       var fab = document.createElement("button")
       fab.className = "mob-fab"
-      fab.textContent = "🎵"
+      fab.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="3.5" cy="3.5" r="2" fill="currentColor"/><circle cx="9" cy="3.5" r="2" fill="currentColor"/><circle cx="14.5" cy="3.5" r="2" fill="currentColor"/><circle cx="3.5" cy="9" r="2" fill="currentColor"/><circle cx="9" cy="9" r="2" fill="currentColor"/><circle cx="14.5" cy="9" r="2" fill="currentColor"/><circle cx="3.5" cy="14.5" r="2" fill="currentColor"/><circle cx="9" cy="14.5" r="2" fill="currentColor"/><circle cx="14.5" cy="14.5" r="2" fill="currentColor"/></svg>'
       fab.setAttribute("aria-label", "Ouvrir le menu widgets")
       var fabMenu = document.createElement("div")
       fabMenu.className = "mob-fab-menu"

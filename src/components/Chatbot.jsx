@@ -8,39 +8,49 @@ const INTENTS = [
       "Salut ! Moi c'est Hélène 👋 Pose moi une question sur mon parcours, mes projets ou ma façon de bosser.",
   },
   {
-    keys: ["qui es tu", "parcours", "présente", "toi"],
+    keys: ["qui es tu", "parcours", "présente", "toi", "profil"],
     reply:
-      "Product Designer senior à Paris. Je ne suis pas développeuse, mais je sais vibe coder : avec l'IA (Claude Code et Figma), je transforme une idée en MVP cliquable, sans attendre une équipe de dev.",
+      "Hélène, 34 ans, basée à Paris. Product designer senior, en freelance depuis plus de 3 ans : UI, UX, design systems et recherche utilisateur. Je conçois des produits et je sais aussi les construire avec l'IA, de l'idée au MVP. Toujours en quête de nouveaux projets et de beaux challenges.",
   },
   {
-    keys: ["projet", "travaux", "réalisations"],
+    keys: ["projet", "projets", "travaux", "réalisations", "portfolio"],
     reply:
-      "Mes deux gros projets en solo : Genogy, un SaaS de génogrammes cliniques, et Lexia, une plateforme pour avocats. Les deux sont designés et vibe codés de A à Z. Clique sur les cartes pour le détail.",
+      "Ce que tu vois ici est une sélection. Des produits que j'ai conçus et construits en solo, et des projets clients en design : Custo, Horsenest, Skillgrid. Plus des missions grand compte chez L'Oréal et Stellantis. J'ai aussi travaillé pour Disneyland Paris, Chanel via Mazarine, Witco, Pulp et MyWay, entre autres. Clique sur les cartes pour le détail.",
   },
   {
-    keys: ["genogy"],
+    keys: ["genogy", "génogramme"],
     reply:
-      "Genogy, c'est un SaaS pour créer des génogrammes cliniques : éditeur canvas, fiches membres, design system. Conçu et vibe codé en solo. Le site est en ligne sur genogy-app.com.",
+      "Genogy, c'est un SaaS pour créer des génogrammes cliniques : éditeur sur canvas, fiches membres, design system. Conçu et construit en solo avec l'IA. En ligne sur genogy-app.com.",
   },
   {
-    keys: ["lexia"],
+    keys: ["lexia", "avocat"],
     reply:
-      "Lexia, c'est une plateforme pour avocats : une marketplace pour trouver un avocat vérifié, et un back office cabinet avec dossiers, agenda, facturation, plus des relances et des résumés générés par IA.",
+      "Lexia, c'est mon produit, que je fonde en solo : une marketplace pour trouver un avocat vérifié et un espace cabinet avec dossiers, agenda, facturation, plus des relances et des résumés assistés par IA. En construction active.",
   },
   {
-    keys: ["oréal", "loréal", "stellantis", "expérience"],
+    keys: ["custo", "horsenest", "skillgrid", "client", "clients"],
     reply:
-      "Chez L'Oréal (R&I) et Stellantis, j'ai fait du design produit sur des outils internes. Je ne peux pas montrer de captures (NDA), mais j'en parle avec plaisir en entretien.",
+      "En design pour des clients : Custo (emballages personnalisés), Horsenest (gestion équestre) et Skillgrid (SaaS RH). Sur chacun j'ai porté l'UX, l'UI et le design system, seule en freelance.",
   },
   {
-    keys: ["ia", "méthode", "vibe", "comment tu bosses", "workflow"],
+    keys: ["oréal", "loréal", "stellantis", "disney", "chanel", "grand compte", "expérience"],
     reply:
-      "L'IA est au cœur de ma méthode : je prototype avec Claude Code et Figma, et je livre un MVP cliquable sans attendre une équipe de dev. Genogy et Lexia en sont la preuve.",
+      "J'ai mené des missions grand compte chez L'Oréal en R&I et Stellantis, et travaillé pour Disneyland Paris et Chanel via Mazarine. Toujours du design produit, souvent avec des design systems. Les projets sous NDA, j'en parle avec plaisir en entretien.",
   },
   {
-    keys: ["dispo", "disponible", "freelance", "recrutement", "embauche", "mission"],
+    keys: ["ia", "build", "builder", "construis", "méthode", "comment tu bosses", "workflow", "design et ia"],
     reply:
-      "Je suis freelance, mais ouverte au CDD, CDI ou autre si le poste est intéressant. Basée à Paris, en télétravail.",
+      "Mon métier, c'est le design produit : UX, UI, design systems, recherche. En plus de ça, je sais construire ce que je conçois avec l'IA, jusqu'à un MVP cliquable. Ça me permet de tester une idée vite, de mieux parler le langage des équipes tech, et de collaborer plus facilement avec les devs. Designer avant tout, builder en bonus.",
+  },
+  {
+    keys: ["compétences", "skills", "expertise", "savoir faire"],
+    reply:
+      "UI, UX, design systems, recherche et tests utilisateurs, prototypage. Une vraie culture tech (formation HETIC, un passé front) qui aide à parler le langage des équipes. Et la capacité à construire avec l'IA.",
+  },
+  {
+    keys: ["dispo", "disponible", "freelance", "recrutement", "embauche", "mission", "cdi", "cdd"],
+    reply:
+      "Ouverte aux opportunités, CDI, CDD ou freelance, si le projet est intéressant. Je suis à Paris, en hybride.",
   },
   {
     keys: ["contact", "mail", "email", "joindre", "écrire"],
@@ -48,27 +58,27 @@ const INTENTS = [
       "Le plus simple : hln.margary@gmail.com. Tu me trouves aussi sur Malt.",
   },
   {
-    keys: ["paris", "où", "localisation", "ville"],
+    keys: ["paris", "où", "localisation", "ville", "hybride", "télétravail"],
     reply:
-      "Je suis à Paris, et je bosse en télétravail, mobile pour les rencontres qui comptent.",
+      "Je suis à Paris, en hybride, avec un peu de télétravail (j'ai un petit chien à la maison 🐶).",
   },
   {
-    keys: ["hobbies", "passions", "intérêts", "en dehors"],
-    reply: "En dehors du design : la cuisine 🍳, les voyages ✈️, Paris 🗼 et l'IA 🤖.",
+    keys: ["hobbies", "passions", "intérêts", "en dehors", "perso"],
+    reply: "En dehors du design : la cuisine 🍳, les voyages ✈️ et l'IA 🤖.",
   },
   {
-    keys: ["merci"],
+    keys: ["merci", "thanks", "top", "super"],
     reply: "Avec plaisir 😊 N'hésite pas si tu as d'autres questions.",
   },
 ]
 
 const FALLBACK =
-  "Bonne question ! Je n'ai pas de réponse toute prête là dessus. Demande moi plutôt mes projets, ma dispo, ma méthode avec l'IA, ou comment me contacter."
+  "Bonne question ! Je n'ai pas de réponse toute prête là dessus. Demande moi plutôt mon parcours, mes projets, ma façon de bosser avec l'IA, ma dispo, ou comment me contacter."
 
 const SUGGESTIONS = [
   "Qui es tu ?",
   "Tes projets",
-  "Ta méthode avec l'IA",
+  "Design et IA",
   "Tu es dispo ?",
   "Te contacter",
 ]
