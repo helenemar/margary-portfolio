@@ -33,7 +33,7 @@ import L_CASE from "./assets/lexia-3-dossier.jpg"
 import L_REL from "./assets/lexia-4-relances.jpg"
 import LOREAL_LOGO from "./assets/LOreal-Logo-1536x869.png"
 import STELLANTIS_LOGO from "./assets/Stellantis.svg"
-import LOFI_SRC from "./assets/lofi-loop.mp3"
+import LOFI_SRC from "./assets/lofi-mushie.mp3"
 import BOTIMG from "./assets/helene-avatar-full.png"
 import AV from "./assets/helene-photo.jpg"
 import SK_1 from "./assets/skillgrid-1-dashboard.png"
@@ -66,7 +66,6 @@ import AS_1 from "./assets/assurvisor-1-dashboard.png"
 import AS_2 from "./assets/assurvisor-2-recherche.png"
 import AS_3 from "./assets/assurvisor-3-fiche-entreprise.png"
 import AS_4 from "./assets/assurvisor-4-crm.png"
-import AS_5 from "./assets/assurvisor-5-inscription.png"
 
 export default function App() {
   useEffect(() => {
@@ -322,7 +321,7 @@ export default function App() {
         accent: "#F2555A",
         subtitle: "ASSURVISOR \u00b7 SAAS \u00b7 COURTIERS EN ASSURANCE",
         title: "Assurvisor, la veille des courtiers",
-        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
+        role: "Product designer freelance : UX, UI et design system.",
         desc: "Assurvisor est un SaaS pour les courtiers en assurance\u00a0: surveillance d\u2019entreprises, veille des nouveaux inscrits ORIAS, recherche avanc\u00e9e, fiches entreprises d\u00e9taill\u00e9es et suivi CRM. J\u2019ai con\u00e7u un produit dense et riche en donn\u00e9es, pens\u00e9 pour rester clair et rapide \u00e0 utiliser au quotidien, de la recherche aux \u00e9crans haute fid\u00e9lit\u00e9.",
         link: "",
         linkLabel: "",
@@ -336,7 +335,6 @@ export default function App() {
           { img: AS_2, cap: "Recherche avanc\u00e9e" },
           { img: AS_3, cap: "Fiche entreprise" },
           { img: AS_4, cap: "Suivi CRM" },
-          { img: AS_5, cap: "Inscription" },
         ],
       },
     }
@@ -2355,7 +2353,7 @@ export default function App() {
             + '<circle cx="40" cy="40" r="2" fill="var(--acc)" opacity=".6"/>'
             + '</svg>'
             + '<div class="lofi-mid">'
-            + '<div class="lofi-title">Lofi ambiance</div>'
+            + '<div class="lofi-title">Lofi Mushie in a forest</div>'
             + '<div class="lofi-status">' + (playing ? 'en lecture' : 'en pause') + '</div>'
             + '<div class="lofi-eq">'
             + '<span class="lofi-bar b1"></span>'
