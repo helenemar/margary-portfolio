@@ -62,6 +62,11 @@ import HR_M5 from "./assets/horsnestmobile5.png"
 import HR_M6 from "./assets/horsnestmobile6.png"
 import HR_M7 from "./assets/horsnestmobile7.png"
 import HR_M8 from "./assets/horsnestmobile8.png"
+import AS_1 from "./assets/assurvisor-1-dashboard.png"
+import AS_2 from "./assets/assurvisor-2-recherche.png"
+import AS_3 from "./assets/assurvisor-3-fiche-entreprise.png"
+import AS_4 from "./assets/assurvisor-4-crm.png"
+import AS_5 from "./assets/assurvisor-5-inscription.png"
 
 export default function App() {
   useEffect(() => {
@@ -311,6 +316,27 @@ export default function App() {
           { img: CU_6, cap: "Éditeur de personnalisation" },
           { img: CU_7, cap: "Panier" },
           { img: CU_8, cap: "Espace client et commandes" },
+        ],
+      },
+      assurvisor: {
+        accent: "#F2555A",
+        subtitle: "ASSURVISOR \u00b7 SAAS \u00b7 COURTIERS EN ASSURANCE",
+        title: "Assurvisor, la veille des courtiers",
+        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
+        desc: "Assurvisor est un SaaS pour les courtiers en assurance\u00a0: surveillance d\u2019entreprises, veille des nouveaux inscrits ORIAS, recherche avanc\u00e9e, fiches entreprises d\u00e9taill\u00e9es et suivi CRM. J\u2019ai con\u00e7u un produit dense et riche en donn\u00e9es, pens\u00e9 pour rester clair et rapide \u00e0 utiliser au quotidien, de la recherche aux \u00e9crans haute fid\u00e9lit\u00e9.",
+        link: "",
+        linkLabel: "",
+        tags: [
+          "Product Design",
+          "UI",
+          "Design System",
+        ],
+        shots: [
+          { img: AS_1, cap: "Tableau de bord" },
+          { img: AS_2, cap: "Recherche avanc\u00e9e" },
+          { img: AS_3, cap: "Fiche entreprise" },
+          { img: AS_4, cap: "Suivi CRM" },
+          { img: AS_5, cap: "Inscription" },
         ],
       },
     }
@@ -582,6 +608,19 @@ export default function App() {
         '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Custo, le packaging sur mesure</h3><div class="pcover"><img src="' +
         CU_1 +
         '" alt="Custo"></div><p class="fdesc">Une plateforme B2B pour personnaliser et commander son packaging.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>E-commerce</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+    })
+    // Assurvisor (projet client courtage)
+    addFrame({
+      proj: "assurvisor",
+      x: 1840,
+      y: 1350,
+      w: 520,
+      h: 540,
+      label: "<b>Assurvisor</b> \u00b7 SaaS \u00b7 courtiers en assurance",
+      html:
+        '<div class="pad"><div class="fbrand">DESIGN PRODUIT, SEULE EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Assurvisor, la veille des courtiers</h3><div class="pcover"><img src="' +
+        AS_1 +
+        '" alt="Assurvisor"></div><p class="fdesc">Un SaaS pour les courtiers en assurance\u00a0: veille, recherche, fiches entreprises et CRM.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
     })
     // (desktop positions are the only positions – no mobile reflow)
     // pins
