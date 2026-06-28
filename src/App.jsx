@@ -112,11 +112,11 @@ export default function App() {
       if (o.proj && PROJECTS[o.proj]) f.style.setProperty("--acc", PROJECTS[o.proj].accent)
       // per-frame float: unique duration, delay, amplitude, rotation
       var seed = frameIdx++ * 2654435761 >>> 0 // hash-like spread
-      var dur = 6 + (seed % 4000) / 1000        // 6s – 10s
-      var del = -((seed >> 12) % 10000) / 1000   // -10s – 0s (negative = pre-offset)
-      var dy  = -(4 + (seed >> 4) % 3)           // -4px – -6px
-      var dx  = 1 + (seed >> 8) % 2              // 1px – 2px
-      var rot = 0.3 + ((seed >> 16) % 3) / 10    // 0.3deg – 0.5deg
+      var dur = 6 + (seed % 5000) / 1000        // 6s – 11s
+      var del = -((seed >> 12) % 11000) / 1000   // -11s – 0s (wide spread)
+      var dy  = -(5 + (seed >> 4) % 4)           // -5px – -8px
+      var dx  = 1 + ((seed >> 8) % 20) / 10      // 1px – 3px
+      var rot = 0.3 + ((seed >> 16) % 4) / 10    // 0.3deg – 0.6deg
       f.style.setProperty("--fl-dur", dur.toFixed(2) + "s")
       f.style.setProperty("--fl-del", del.toFixed(2) + "s")
       f.style.setProperty("--fl-dy", dy + "px")
