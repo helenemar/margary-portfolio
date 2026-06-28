@@ -1,5 +1,6 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import "./index.css"
+import { t, getLang, toggleLang, onLangChange, updateAllText } from "./i18n"
 
 // Real asset imports (replace PLACEHOLDERs)
 import G_LAND from "./assets/genogy-1-landing.jpg"
@@ -68,6 +69,7 @@ import AS_3 from "./assets/assurvisor-3-fiche-entreprise.png"
 import AS_4 from "./assets/assurvisor-4-crm.png"
 
 export default function App() {
+  const [lang, setLang] = useState(getLang())
   useEffect(() => {
     // ===== INIT VARS =====
     // Clear dynamic containers (prevents duplicates on HMR)
@@ -103,10 +105,23 @@ export default function App() {
     // ===== WORLD CONTENT =====
     var world = $("#world")
     var frames = []
+    var frameIdx = 0
     function addFrame(o) {
       var f = document.createElement("div")
       f.className = "frame" + (o.proj ? " frame--clickable" : "")
       if (o.proj && PROJECTS[o.proj]) f.style.setProperty("--acc", PROJECTS[o.proj].accent)
+      // per-frame float: unique duration, delay, amplitude, rotation
+      var seed = frameIdx++ * 2654435761 >>> 0 // hash-like spread
+      var dur = 4 + (seed % 3000) / 1000        // 4s – 7s
+      var del = -((seed >> 12) % 7000) / 1000    // -7s – 0s (negative = pre-offset)
+      var dy  = -(8 + (seed >> 4) % 7)           // -8px – -14px
+      var dx  = 2 + (seed >> 8) % 3              // 2px – 4px
+      var rot = 0.4 + ((seed >> 16) % 7) / 10    // 0.4deg – 1.0deg
+      f.style.setProperty("--fl-dur", dur.toFixed(2) + "s")
+      f.style.setProperty("--fl-del", del.toFixed(2) + "s")
+      f.style.setProperty("--fl-dy", dy + "px")
+      f.style.setProperty("--fl-dx", dx + "px")
+      f.style.setProperty("--fl-rot", rot.toFixed(1) + "deg")
       f.style.left = o.x + "px"
       f.style.top = o.y + "px"
       f.style.width = o.w + "px"
@@ -180,12 +195,9 @@ export default function App() {
     var PROJECTS = {
       genogy: {
         accent: "#8B5CF6",
-        subtitle: "GENOGY \u00b7 SAAS \u00b7 G\u00c9NOGRAMMES CLINIQUES",
-        title: "Genogy, le SaaS de g\u00e9nogrammes",
-        role: "Product designer en solo : recherche, UX, UI et design system, puis construit avec l'IA jusqu'au produit en ligne.",
-        desc: "Genogy aide th\u00e9rapeutes et soignants \u00e0 cr\u00e9er des g\u00e9nogrammes cliniques : \u00e9diteur sur canvas, fiches membres et design system complet. J'ai port\u00e9 le produit de la recherche jusqu'\u00e0 la mise en ligne, seule, en le concevant puis en le construisant avec l'IA.",
+        i18nPrefix: "genogy",
         link: "https://genogy-app.com",
-        linkLabel: "Voir le site",
+        linkLabelKey: "genogy.linkLabel",
         tags: [
           "Product Design",
           "SaaS",
@@ -214,13 +226,9 @@ export default function App() {
       },
       lexia: {
         accent: "#1E8E5A",
-        subtitle: "LEXIA \u00b7 LEGALTECH \u00b7 MON PRODUIT",
-        title: "Lexia, le SaaS des avocats",
-        role: "Fondatrice et product designer, seule sur le produit : vision, UX, UI et design system, con\u00e7u et construit avec l'IA.",
-        desc: "Lexia est mon produit, que je fonde et construis en solo. Une marketplace pour trouver un avocat v\u00e9rifi\u00e9 et un espace cabinet avec dossiers, agenda et facturation, enrichi de relances et de r\u00e9sum\u00e9s assist\u00e9s par IA. En construction active.",
+        i18nPrefix: "lexia",
         link: "",
-        linkLabel: "",
-        status: "En construction",
+        statusKey: "lexia.status",
         tags: [
           "Product Design",
           "SaaS",
@@ -235,12 +243,8 @@ export default function App() {
       },
       skillgrid: {
         accent: "#0EA5E9",
-        subtitle: "SKILLGRID \u00b7 SAAS RH \u00b7 GESTION DES TALENTS",
-        title: "Skillgrid, piloter les talents",
-        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
-        desc: "Skillgrid centralise le pilotage des talents : organigramme, matrice de comp\u00e9tences, campagnes d'entretiens, suivi des actions et signatures. J'ai con\u00e7u un produit dense, pens\u00e9 pour rester clair et actionnable, de la recherche aux \u00e9crans haute fid\u00e9lit\u00e9.",
+        i18nPrefix: "skillgrid",
         link: "",
-        linkLabel: "",
         tags: [
           "Product Design",
           "UI",
@@ -258,12 +262,8 @@ export default function App() {
       },
       horsenest: {
         accent: "#4B8B6E",
-        subtitle: "HORSENEST \u00b7 SAAS \u00b7 GESTION \u00c9QUESTRE",
-        title: "Horsenest, g\u00e9rer son \u00e9curie",
-        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
-        desc: "Horsenest r\u00e9unit profils de chevaux, plannings, organisations, r\u00f4les et facturation, du site vitrine jusqu'\u00e0 l'application. J'ai men\u00e9 le design produit de bout en bout, jusqu'\u00e0 un design system complet, en responsive mobile et desktop.",
+        i18nPrefix: "horsenest",
         link: "",
-        linkLabel: "",
         tags: [
           "Product Design",
           "UI",
@@ -295,12 +295,8 @@ export default function App() {
       },
       custo: {
         accent: "#C2772E",
-        subtitle: "CUSTO \u00b7 E-COMMERCE \u00b7 EMBALLAGES PERSONNALIS\u00c9S",
-        title: "Custo, le packaging sur mesure",
-        role: "Product designer freelance, seule sur le projet : UX, UI et design system.",
-        desc: "Custo permet de commander des emballages alimentaires personnalis\u00e9s et responsables. J'ai con\u00e7u tout le parcours : du catalogue au configurateur en plusieurs \u00e9tapes, jusqu'\u00e0 un \u00e9diteur de personnalisation en direct, le panier et l'espace client. Pens\u00e9 pour rester simple et guider de l'id\u00e9e \u00e0 la commande.",
+        i18nPrefix: "custo",
         link: "",
-        linkLabel: "",
         tags: [
           "Product Design",
           "UI",
@@ -319,12 +315,8 @@ export default function App() {
       },
       assurvisor: {
         accent: "#F2555A",
-        subtitle: "ASSURVISOR \u00b7 SAAS \u00b7 COURTIERS EN ASSURANCE",
-        title: "Assurvisor, la veille des courtiers",
-        role: "Product designer freelance : UX, UI et design system.",
-        desc: "Assurvisor est un SaaS pour les courtiers en assurance\u00a0: surveillance d\u2019entreprises, veille des nouveaux inscrits ORIAS, recherche avanc\u00e9e, fiches entreprises d\u00e9taill\u00e9es et suivi CRM. J\u2019ai con\u00e7u un produit dense et riche en donn\u00e9es, pens\u00e9 pour rester clair et rapide \u00e0 utiliser au quotidien, de la recherche aux \u00e9crans haute fid\u00e9lit\u00e9.",
+        i18nPrefix: "assurvisor",
         link: "",
-        linkLabel: "",
         tags: [
           "Product Design",
           "UI",
@@ -387,30 +379,31 @@ export default function App() {
         })
         flushMobile()
       }
+      var pfx = p.i18nPrefix
       var tags = p.tags
-        .map(function (t) {
-          return "<span>" + t + "</span>"
+        .map(function (tg) {
+          return "<span>" + tg + "</span>"
         })
         .join("")
       var link = p.link
         ? '<a class="pm-link" href="' +
           p.link +
           '" target="_blank" rel="noopener">' +
-          p.linkLabel +
+          t(p.linkLabelKey || pfx + ".linkLabel") +
           " \u2197</a>"
         : ""
-      var status = p.status
-        ? '<div class="pm-status">\u{1F6A7} ' + p.status + '</div>'
+      var status = p.statusKey
+        ? '<div class="pm-status">\u{1F6A7} ' + t(p.statusKey) + '</div>'
         : ""
       m.querySelector(".pm-panel").innerHTML =
         '<div class="pm-head"><div><div class="pm-brand">' +
-        p.subtitle +
+        t(pfx + ".subtitle") +
         '</div><div class="pm-title">' +
-        p.title +
-        '</div></div><button class="pm-close" type="button" aria-label="Fermer">\u2715</button></div><div class="pm-body"><div class="pm-role"><b>Mon r\u00f4le :</b> ' +
-        p.role +
+        t(pfx + ".title") +
+        '</div></div><button class="pm-close" type="button" aria-label="Fermer">\u2715</button></div><div class="pm-body"><div class="pm-role"><b>' + t("modal.role") + '</b> ' +
+        t(pfx + ".role") +
         '</div>' +
-        p.desc.split('\n\n').map(function(par) { return '<p class="pm-desc">' + par + '</p>' }).join('') +
+        t(pfx + ".desc").split('\n\n').map(function(par) { return '<p class="pm-desc">' + par + '</p>' }).join('') +
         '<div class="pm-gallery">' +
         shots +
         '</div><div class="pm-tags">' +
@@ -449,9 +442,9 @@ export default function App() {
       h: 540,
       label: "<b>Lexia</b> · legaltech · mon produit",
       html:
-        '<div class="pad"><div class="fbrand">MON PRODUIT, DE LA VISION AU PRODUIT</div><h3 class="ftitle" style="font-size:1.5rem">Lexia, le SaaS des avocats</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand" data-i18n="brand.myProduct">' + t("brand.myProduct") + '</div><h3 class="ftitle" data-i18n="lexia.cardTitle" style="font-size:1.5rem">' + t("lexia.cardTitle") + '</h3><div class="pcover"><img src="' +
         L_LAND +
-        '" alt="Lexia"></div><p class="fdesc">Marketplace et gestion de cabinet, avec relances et r\u00e9sum\u00e9s assist\u00e9s par IA.</p><div class="ftags"><span>Product Design</span><span>SaaS</span><span>IA</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Lexia"></div><p class="fdesc" data-i18n="lexia.cardDesc">' + t("lexia.cardDesc") + '</p><div class="ftags"><span>Product Design</span><span>SaaS</span><span>IA</span></div><button class="pmore" type="button" data-i18n="viewProject">' + t("viewProject") + '</button></div>',
     })
     // intro
     addFrame({
@@ -459,7 +452,7 @@ export default function App() {
       y: 0,
       w: 320,
       label: "<b>moi.txt</b>",
-      html: '<div class="intro-card"><div class="intro-wave">\u270B</div><div class="intro-badge">Product Designer \u00b7 Paris</div><h3 class="intro-title">Bienvenue dans mon fichier.</h3><p class="intro-desc">\u00c0 toi de jouer\u00a0: glisse pour te d\u00e9placer, zoome sur une frame. C\'est mon environnement naturel, je t\'y re\u00e7ois avec plaisir.</p><div class="intro-keys"><span>\u2190\u2192 glisser</span><span>\u26F1 zoomer</span><span>\u25C9 cliquer</span></div></div>',
+      html: '<div class="intro-card"><div class="intro-wave">\u270B</div><div class="intro-badge" data-i18n="intro.badge">' + t("intro.badge") + '</div><h3 class="intro-title" data-i18n="intro.title">' + t("intro.title") + '</h3><p class="intro-desc" data-i18n="intro.desc">' + t("intro.desc") + '</p><div class="intro-keys"><span data-i18n="intro.drag">' + t("intro.drag") + '</span><span data-i18n="intro.zoom">' + t("intro.zoom") + '</span><span data-i18n="intro.click">' + t("intro.click") + '</span></div></div>',
     })
     // L'Oréal
     addFrame({
@@ -469,14 +462,14 @@ export default function App() {
       h: 440,
       label: "<b>L'Or\u00e9al \u00b7 R&I</b>",
       html:
-        '<div class="pad" style="--nda-c:#F24E1E"><div class="fbrand"><img src="' + LOREAL_LOGO + '" alt="L\'Or\u00e9al" class="fbrand-inline-logo"> \u00b7 RECHERCHE &amp; INNOVATION</div><h3 class="ftitle">App Store interne R&I</h3>'
+        '<div class="pad" style="--nda-c:#F24E1E"><div class="fbrand"><img src="' + LOREAL_LOGO + '" alt="L\'Or\u00e9al" class="fbrand-inline-logo"> \u00b7 <span data-i18n="loreal.brand">' + t("loreal.brand") + '</span></div><h3 class="ftitle" data-i18n="loreal.title">' + t("loreal.title") + '</h3>'
         + '<div class="nda-illus" style="--nda-c:#F24E1E;color:#F24E1E"><img src="' + LOREAL_LOGO + '" alt="L\'Or\u00e9al" class="nda-logo">'
         + '<svg class="nda-shapes" viewBox="0 0 400 150" fill="none"><rect x="8" y="8" width="70" height="134" rx="8" fill="currentColor" opacity=".10"/><rect x="90" y="8" width="140" height="56" rx="8" fill="currentColor" opacity=".08"/><rect x="90" y="74" width="66" height="68" rx="8" fill="currentColor" opacity=".07"/><rect x="166" y="74" width="66" height="68" rx="8" fill="currentColor" opacity=".09"/><rect x="244" y="8" width="148" height="134" rx="8" fill="currentColor" opacity=".06"/><polyline points="258,120 280,95 310,105 340,80 370,90" stroke="currentColor" stroke-width="2" opacity=".18" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
-        + '<div class="nda-impact"><span>Design system groupe</span><span>Recherche utilisateur</span></div>'
-        + '<p class="fdesc" style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:0">Product designer pour les \u00e9quipes Recherche &amp; Innovation.</p>'
-        + '<p class="fdesc" style="font-size:.84rem">J\'ai con\u00e7u un App Store interne qui centralise les outils m\u00e9tier \u00e0 l\'\u00e9chelle du groupe. Trois it\u00e9rations majeures guid\u00e9es par la recherche utilisateur, et un design system renforc\u00e9 pour une coh\u00e9rence durable et un relais fluide vers les \u00e9quipes techniques.</p>'
+        + '<div class="nda-impact"><span data-i18n="loreal.impact1">' + t("loreal.impact1") + '</span><span data-i18n="loreal.impact2">' + t("loreal.impact2") + '</span></div>'
+        + '<p class="fdesc" style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:0" data-i18n="loreal.roleText">' + t("loreal.roleText") + '</p>'
+        + '<p class="fdesc" style="font-size:.84rem" data-i18n="loreal.desc">' + t("loreal.desc") + '</p>'
         + '<div class="ftags"><span>Product Design</span><span>Design System</span><span>Recherche UX</span></div>'
-        + '<div class="nda-badge">\uD83D\uDD12 Visuels d\u00e9taill\u00e9s sur demande, projet sous NDA</div></div>',
+        + '<div class="nda-badge" data-i18n="nda.badge">' + t("nda.badge") + '</div></div>',
     })
     // Stellantis
     addFrame({
@@ -486,14 +479,14 @@ export default function App() {
       h: 420,
       label: "<b>Stellantis</b>",
       html:
-        '<div class="pad" style="--nda-c:#1ABCFE"><div class="fbrand"><img src="' + STELLANTIS_LOGO + '" alt="Stellantis" class="fbrand-inline-logo"> \u00b7 FINANCE &amp; SERVICES</div><h3 class="ftitle">Refonte de MyFinance</h3>'
+        '<div class="pad" style="--nda-c:#1ABCFE"><div class="fbrand"><img src="' + STELLANTIS_LOGO + '" alt="Stellantis" class="fbrand-inline-logo"> \u00b7 <span data-i18n="stellantis.brand">' + t("stellantis.brand") + '</span></div><h3 class="ftitle" data-i18n="stellantis.title">' + t("stellantis.title") + '</h3>'
         + '<div class="nda-illus" style="--nda-c:#1ABCFE;color:#1ABCFE"><img src="' + STELLANTIS_LOGO + '" alt="Stellantis" class="nda-logo">'
         + '<svg class="nda-shapes" viewBox="0 0 400 150" fill="none"><rect x="8" y="8" width="384" height="36" rx="6" fill="currentColor" opacity=".07"/><rect x="8" y="54" width="120" height="88" rx="8" fill="currentColor" opacity=".09"/><rect x="140" y="54" width="120" height="88" rx="8" fill="currentColor" opacity=".07"/><rect x="272" y="54" width="120" height="88" rx="8" fill="currentColor" opacity=".10"/><polyline points="22,120 50,100 80,110 110,90" stroke="currentColor" stroke-width="2" opacity=".18" stroke-linecap="round" stroke-linejoin="round"/><polyline points="154,120 182,105 210,115 240,95" stroke="currentColor" stroke-width="2" opacity=".18" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
-        + '<div class="nda-impact"><span>Refonte de bout en bout</span><span>Parcours repens\u00e9s</span><span>Coh\u00e9rence d\'interface</span></div>'
-        + '<p class="fdesc" style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:0">Product designer sur la refonte d\'une plateforme de gestion financi\u00e8re.</p>'
-        + '<p class="fdesc" style="font-size:.84rem">J\'ai men\u00e9 la refonte de MyFinance de bout en bout : nouvelle interface des outils financiers, parcours cl\u00e9s repens\u00e9s et coh\u00e9rence renforc\u00e9e, en lien \u00e9troit avec les \u00e9quipes produit.</p>'
+        + '<div class="nda-impact"><span data-i18n="stellantis.impact1">' + t("stellantis.impact1") + '</span><span data-i18n="stellantis.impact2">' + t("stellantis.impact2") + '</span><span data-i18n="stellantis.impact3">' + t("stellantis.impact3") + '</span></div>'
+        + '<p class="fdesc" style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:0" data-i18n="stellantis.roleText">' + t("stellantis.roleText") + '</p>'
+        + '<p class="fdesc" style="font-size:.84rem" data-i18n="stellantis.desc">' + t("stellantis.desc") + '</p>'
         + '<div class="ftags"><span>Product Design</span><span>UI</span><span>Refonte</span></div>'
-        + '<div class="nda-badge">\uD83D\uDD12 Visuels d\u00e9taill\u00e9s sur demande, projet sous NDA</div></div>',
+        + '<div class="nda-badge" data-i18n="nda.badge">' + t("nda.badge") + '</div></div>',
     })
     // Genogy (vrai projet)
     addFrame({
@@ -505,9 +498,9 @@ export default function App() {
       label:
         "<b>Genogy</b> · SaaS · génogrammes cliniques",
       html:
-        '<div class="pad"><div class="fbrand">DESIGN + CONSTRUCTION DU PRODUIT</div><h3 class="ftitle" style="font-size:1.5rem">Genogy, le SaaS de génogrammes</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand" data-i18n="brand.built">' + t("brand.built") + '</div><h3 class="ftitle" data-i18n="genogy.cardTitle" style="font-size:1.5rem">' + t("genogy.cardTitle") + '</h3><div class="pcover"><img src="' +
         G_LAND +
-        '" alt="Genogy"></div><p class="fdesc">Un SaaS de g\u00e9nogrammes cliniques, con\u00e7u et construit en solo avec l\'IA.</p><div class="ftags"><span>Product Design</span><span>SaaS</span><span>IA builder</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Genogy"></div><p class="fdesc" data-i18n="genogy.cardDesc">' + t("genogy.cardDesc") + '</p><div class="ftags"><span>Product Design</span><span>SaaS</span><span>IA builder</span></div><button class="pmore" type="button" data-i18n="viewProject">' + t("viewProject") + '</button></div>',
     })
     // brands
     addFrame({
@@ -515,14 +508,14 @@ export default function App() {
       y: 0,
       w: 300,
       label: "<b>freelance.list</b>",
-      html: '<div class="xp-card"><div class="xp-eye">Freelance grands comptes</div><div class="xp-list"><div class="xp-row"><div class="xp-name">L\'Or\u00e9al</div><div class="xp-role">Design system R&I</div></div><div class="xp-row"><div class="xp-name">Stellantis</div><div class="xp-role">UX app concessionnaires</div></div><div class="xp-row"><div class="xp-name">Disney</div><div class="xp-role">Refonte parcours digital</div></div></div><div class="xp-foot">+ de nombreuses missions PME et startups</div></div>',
+      html: '<div class="xp-card"><div class="xp-eye" data-i18n="xp.freelanceEye">' + t("xp.freelanceEye") + '</div><div class="xp-list"><div class="xp-row"><div class="xp-name">L\'Or\u00e9al</div><div class="xp-role" data-i18n="xp.lorealRole">' + t("xp.lorealRole") + '</div></div><div class="xp-row"><div class="xp-name">Stellantis</div><div class="xp-role" data-i18n="xp.stellantisRole">' + t("xp.stellantisRole") + '</div></div><div class="xp-row"><div class="xp-name">Disney</div><div class="xp-role" data-i18n="xp.disneyRole">' + t("xp.disneyRole") + '</div></div></div><div class="xp-foot" data-i18n="xp.moreFreelance">' + t("xp.moreFreelance") + '</div></div>',
     })
     addFrame({
       x: 2450,
       y: 340,
       w: 300,
       label: "<b>parcours.list</b>",
-      html: '<div class="xp-card"><div class="xp-eye">Exp\u00e9riences en CDI</div><div class="xp-list"><div class="xp-row"><div class="xp-name">Mazarine</div><div class="xp-role">D\u00e9v front React</div><a href="https://www.mazarine.com/" target="_blank" rel="noopener" class="xp-link">\u2197</a></div><div class="xp-row"><div class="xp-name">Witco</div><div class="xp-role">Product designer</div><a href="https://www.witco.io/" target="_blank" rel="noopener" class="xp-link">\u2197</a></div><div class="xp-row"><div class="xp-name">Pulp</div><div class="xp-role">UI/UX designer</div><a href="https://www.challenges.fr/entreprise/start-up/pulp-le-click-collect-du-cote-des-restaurateurs_755338" target="_blank" rel="noopener" class="xp-link">\u2197</a></div></div></div>',
+      html: '<div class="xp-card"><div class="xp-eye" data-i18n="xp.cdiEye">' + t("xp.cdiEye") + '</div><div class="xp-list"><div class="xp-row"><div class="xp-name">Mazarine</div><div class="xp-role" data-i18n="xp.mazarineRole">' + t("xp.mazarineRole") + '</div><a href="https://www.mazarine.com/" target="_blank" rel="noopener" class="xp-link">\u2197</a></div><div class="xp-row"><div class="xp-name">Witco</div><div class="xp-role" data-i18n="xp.witcoRole">' + t("xp.witcoRole") + '</div><a href="https://www.witco.io/" target="_blank" rel="noopener" class="xp-link">\u2197</a></div><div class="xp-row"><div class="xp-name">Pulp</div><div class="xp-role" data-i18n="xp.pulpRole">' + t("xp.pulpRole") + '</div><a href="https://www.challenges.fr/entreprise/start-up/pulp-le-click-collect-du-cote-des-restaurateurs_755338" target="_blank" rel="noopener" class="xp-link">\u2197</a></div></div></div>',
     })
     // about/interests
     addFrame({
@@ -531,16 +524,16 @@ export default function App() {
       w: 340,
       label: "<b>apropos.me</b>",
       html: '<div class="ab-card">'
-        + '<div class="ab-identity"><img class="ab-photo" src="' + AV + '" alt="H\u00e9l\u00e8ne Margary"/><div><div class="ab-name">H\u00e9l\u00e8ne Margary</div><div class="ab-label">Product Designer \u00b7 Paris</div></div></div>'
-        + '<div class="ab-eye">QUI JE SUIS</div>'
-        + '<h3 class="ab-title">Product designer avant tout.</h3>'
-        + '<p class="ab-pitch">Senior en UI, UX, design systems et recherche utilisateur. Je sais aussi construire ce que je con\u00e7ois, avec l\'IA, de l\'id\u00e9e au MVP cliquable. Designer d\'abord, IA builder en bonus.</p>'
+        + '<div class="ab-identity"><img class="ab-photo" src="' + AV + '" alt="H\u00e9l\u00e8ne Margary"/><div><div class="ab-name">H\u00e9l\u00e8ne Margary</div><div class="ab-label" data-i18n="about.label">' + t("about.label") + '</div></div></div>'
+        + '<div class="ab-eye" data-i18n="about.eye">' + t("about.eye") + '</div>'
+        + '<h3 class="ab-title" data-i18n="about.title">' + t("about.title") + '</h3>'
+        + '<p class="ab-pitch" data-i18n="about.pitch">' + t("about.pitch") + '</p>'
         + '<div class="ab-infos">'
-        + '<div class="ab-info"><span class="ab-dot"></span><div><b>Dispo</b><span class="ab-detail">Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance.</span></div></div>'
-        + '<div class="ab-info"><span class="ab-pin">\uD83D\uDCCD</span><div><b>Paris</b><span class="ab-detail">T\u00e9l\u00e9travail ou hybride (j\'ai un petit chien \u00e0 la maison \uD83D\uDC36).</span></div></div>'
+        + '<div class="ab-info"><span class="ab-dot"></span><div><b data-i18n="about.dispo">' + t("about.dispo") + '</b><span class="ab-detail" data-i18n="about.dispoDetail">' + t("about.dispoDetail") + '</span></div></div>'
+        + '<div class="ab-info"><span class="ab-pin">\uD83D\uDCCD</span><div><b data-i18n="about.paris">' + t("about.paris") + '</b><span class="ab-detail" data-i18n="about.parisDetail">' + t("about.parisDetail") + '</span></div></div>'
         + '</div>'
-        + '<div class="ab-chips"><span>\uD83C\uDF73 cuisine</span><span>\u2708\uFE0F voyages</span><span>\uD83E\uDD16 IA</span></div>'
-        + '<div class="ab-actions"><a class="ab-primary" href="mailto:hln.margary@gmail.com">\u00c9crire \u2709</a><a class="ab-secondary" href="https://www.malt.fr/profile/helenemargary" target="_blank" rel="noopener">Malt \u2197</a></div>'
+        + '<div class="ab-chips"><span data-i18n="about.chip1">' + t("about.chip1") + '</span><span data-i18n="about.chip2">' + t("about.chip2") + '</span><span data-i18n="about.chip3">' + t("about.chip3") + '</span></div>'
+        + '<div class="ab-actions"><a class="ab-primary" href="mailto:hln.margary@gmail.com" data-i18n="about.cta1">' + t("about.cta1") + '</a><a class="ab-secondary" href="https://www.malt.fr/profile/helenemargary" target="_blank" rel="noopener" data-i18n="about.cta2">' + t("about.cta2") + '</a></div>'
         + '</div>',
     })
     // skills
@@ -550,13 +543,13 @@ export default function App() {
       w: 320,
       label: "<b>m\u00e9thode.md</b>",
       html: '<div class="mt-card">'
-        + '<div class="xp-eye">Ma fa\u00e7on de travailler</div>'
+        + '<div class="xp-eye" data-i18n="method.eye">' + t("method.eye") + '</div>'
         + '<div class="mt-list">'
-        + '<div class="mt-row"><span class="mt-num">01</span><div><div class="mt-title">UI/UX from scratch</div><div class="mt-desc">Refontes compl\u00e8tes et cr\u00e9ation</div></div></div>'
-        + '<div class="mt-row"><span class="mt-num">02</span><div><div class="mt-title">Design system</div><div class="mt-desc">Composants, tokens, doc claire</div></div></div>'
-        + '<div class="mt-row"><span class="mt-num">03</span><div><div class="mt-title">Audit UX</div><div class="mt-desc">Basse puis haute fid\u00e9lit\u00e9</div></div></div>'
-        + '<div class="mt-row"><span class="mt-num">04</span><div><div class="mt-title">Prototypes Figma</div><div class="mt-desc">Pr\u00eats pour les devs, spec\u00e9s</div></div></div>'
-        + '<div class="mt-row"><span class="mt-num">05</span><div><div class="mt-title">IA + vibe coding</div><div class="mt-desc">Claude Code + Figma, MVP sans dev</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">01</span><div><div class="mt-title" data-i18n="method.t1">' + t("method.t1") + '</div><div class="mt-desc" data-i18n="method.d1">' + t("method.d1") + '</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">02</span><div><div class="mt-title" data-i18n="method.t2">' + t("method.t2") + '</div><div class="mt-desc" data-i18n="method.d2">' + t("method.d2") + '</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">03</span><div><div class="mt-title" data-i18n="method.t3">' + t("method.t3") + '</div><div class="mt-desc" data-i18n="method.d3">' + t("method.d3") + '</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">04</span><div><div class="mt-title" data-i18n="method.t4">' + t("method.t4") + '</div><div class="mt-desc" data-i18n="method.d4">' + t("method.d4") + '</div></div></div>'
+        + '<div class="mt-row"><span class="mt-num">05</span><div><div class="mt-title" data-i18n="method.t5">' + t("method.t5") + '</div><div class="mt-desc" data-i18n="method.d5">' + t("method.d5") + '</div></div></div>'
         + '</div></div>',
     })
     // designer games
@@ -566,7 +559,7 @@ export default function App() {
       w: 380,
       onOpen: true,
       label: "<b>playground/</b> \uD83C\uDFA8",
-      html: '<div class="pg-card"><div class="pg-head"><span class="pg-icon">\uD83C\uDFA8</span><div><h3 class="pg-title">Playground</h3><p class="pg-sub">Petits jeux d\u2019\u0153il de designer. Clique pour jouer.</p></div></div><div class="pg-grid"><button class="pg-btn" data-g="coloreye"><span class="pg-emoji">\uD83D\uDFE2</span><span class="pg-name">Color Eye</span><span class="pg-desc">Trouve la couleur diff\u00e9rente</span></button><button class="pg-btn" data-g="kerning"><span class="pg-emoji">A\u2009V</span><span class="pg-name">Kerning</span><span class="pg-desc">Corrige l\u2019espacement</span></button><button class="pg-btn" data-g="colormix"><span class="pg-emoji">\uD83C\uDFA8</span><span class="pg-name">Color Mix</span><span class="pg-desc">Reproduis la couleur cible</span></button></div></div>',
+      html: '<div class="pg-card"><div class="pg-head"><span class="pg-icon">\uD83C\uDFA8</span><div><h3 class="pg-title" data-i18n="pg.title">' + t("pg.title") + '</h3><p class="pg-sub" data-i18n="pg.sub">' + t("pg.sub") + '</p></div></div><div class="pg-grid"><button class="pg-btn" data-g="coloreye"><span class="pg-emoji">\uD83D\uDFE2</span><span class="pg-name" data-i18n="pg.coloreyeName">' + t("pg.coloreyeName") + '</span><span class="pg-desc" data-i18n="pg.coloreyeDesc">' + t("pg.coloreyeDesc") + '</span></button><button class="pg-btn" data-g="kerning"><span class="pg-emoji">A\u2009V</span><span class="pg-name" data-i18n="pg.kerningName">' + t("pg.kerningName") + '</span><span class="pg-desc" data-i18n="pg.kerningDesc">' + t("pg.kerningDesc") + '</span></button><button class="pg-btn" data-g="colormix"><span class="pg-emoji">\uD83C\uDFA8</span><span class="pg-name" data-i18n="pg.colormixName">' + t("pg.colormixName") + '</span><span class="pg-desc" data-i18n="pg.colormixDesc">' + t("pg.colormixDesc") + '</span></button></div></div>',
     })
     // Skillgrid (projet client RH)
     addFrame({
@@ -577,9 +570,9 @@ export default function App() {
       h: 540,
       label: "<b>Skillgrid</b> · SaaS RH · gestion des talents",
       html:
-        '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Skillgrid, piloter les talents</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand" data-i18n="brand.freelance">' + t("brand.freelance") + '</div><h3 class="ftitle" data-i18n="skillgrid.cardTitle" style="font-size:1.5rem">' + t("skillgrid.cardTitle") + '</h3><div class="pcover"><img src="' +
         SK_1 +
-        '" alt="Skillgrid"></div><p class="fdesc">Le SaaS RH qui réunit organigramme, matrice de compétences et entretiens au même endroit.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Skillgrid"></div><p class="fdesc" data-i18n="skillgrid.cardDesc">' + t("skillgrid.cardDesc") + '</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button" data-i18n="viewProject">' + t("viewProject") + '</button></div>',
     })
     // Horsenest (projet client équestre)
     addFrame({
@@ -590,9 +583,9 @@ export default function App() {
       h: 540,
       label: "<b>Horsenest</b> · SaaS · gestion équestre",
       html:
-        '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Horsenest, gérer son écurie</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand" data-i18n="brand.freelance">' + t("brand.freelance") + '</div><h3 class="ftitle" data-i18n="horsenest.cardTitle" style="font-size:1.5rem">' + t("horsenest.cardTitle") + '</h3><div class="pcover"><img src="' +
         HR_P1 +
-        '" alt="Horsenest"></div><p class="fdesc">Une plateforme de gestion \u00e9questre, du site vitrine \u00e0 l\'application.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Horsenest"></div><p class="fdesc" data-i18n="horsenest.cardDesc">' + t("horsenest.cardDesc") + '</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button" data-i18n="viewProject">' + t("viewProject") + '</button></div>',
     })
     // Custo (projet client e-commerce)
     addFrame({
@@ -603,9 +596,9 @@ export default function App() {
       h: 540,
       label: "<b>Custo</b> · e-commerce · emballages personnalisés",
       html:
-        '<div class="pad"><div class="fbrand">DESIGN PRODUIT EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Custo, le packaging sur mesure</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand" data-i18n="brand.freelance">' + t("brand.freelance") + '</div><h3 class="ftitle" data-i18n="custo.cardTitle" style="font-size:1.5rem">' + t("custo.cardTitle") + '</h3><div class="pcover"><img src="' +
         CU_1 +
-        '" alt="Custo"></div><p class="fdesc">Une plateforme B2B pour personnaliser et commander son packaging.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>E-commerce</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Custo"></div><p class="fdesc" data-i18n="custo.cardDesc">' + t("custo.cardDesc") + '</p><div class="ftags"><span>Product Design</span><span>UI</span><span>E-commerce</span></div><button class="pmore" type="button" data-i18n="viewProject">' + t("viewProject") + '</button></div>',
     })
     // Assurvisor (projet client courtage)
     addFrame({
@@ -616,9 +609,9 @@ export default function App() {
       h: 540,
       label: "<b>Assurvisor</b> \u00b7 SaaS \u00b7 courtiers en assurance",
       html:
-        '<div class="pad"><div class="fbrand">DESIGN PRODUIT, SEULE EN FREELANCE</div><h3 class="ftitle" style="font-size:1.5rem">Assurvisor, la veille des courtiers</h3><div class="pcover"><img src="' +
+        '<div class="pad"><div class="fbrand" data-i18n="brand.assurvisor">' + t("brand.assurvisor") + '</div><h3 class="ftitle" data-i18n="assurvisor.cardTitle" style="font-size:1.5rem">' + t("assurvisor.cardTitle") + '</h3><div class="pcover"><img src="' +
         AS_1 +
-        '" alt="Assurvisor"></div><p class="fdesc">Un SaaS pour les courtiers en assurance\u00a0: veille, recherche, fiches entreprises et CRM.</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button">Voir le projet \u2192</button></div>',
+        '" alt="Assurvisor"></div><p class="fdesc" data-i18n="assurvisor.cardDesc">' + t("assurvisor.cardDesc") + '</p><div class="ftags"><span>Product Design</span><span>UI</span><span>Design System</span></div><button class="pmore" type="button" data-i18n="viewProject">' + t("viewProject") + '</button></div>',
     })
     // (desktop positions are the only positions – no mobile reflow)
     // pins
@@ -626,20 +619,20 @@ export default function App() {
       380,
       -60,
       "Romane",
-      "Super clean le flow discovery \u2192 Figma \uD83D\uDC4C"
+      '<span data-i18n="pin.romane">' + t("pin.romane") + '</span>'
     )
-    addPin(2380, 300, "Lucas", "Nice refonte, approved \u2713")
+    addPin(2380, 300, "Lucas", '<span data-i18n="pin.lucas">' + t("pin.lucas") + '</span>')
     addPin(
       1080,
       200,
       "Cl\u00e9ment",
-      "Design + vibe coding en solo, respect."
+      '<span data-i18n="pin.clement">' + t("pin.clement") + '</span>'
     )
     addPin(
       1080,
       600,
       "Romane",
-      "Deux SaaS complets ship\u00e9s solo \uD83D\uDD25"
+      '<span data-i18n="pin.romane2">' + t("pin.romane2") + '</span>'
     )
 
     // game buttons
@@ -688,7 +681,14 @@ export default function App() {
       var Y = centerY - (r.y + r.h / 2) * s
       animateView(s, X, Y)
     }
+    var steadyEl = null
+    function steadyFrame(f) {
+      if (steadyEl) steadyEl.classList.remove("frame--steady")
+      if (f && f.el) { f.el.classList.add("frame--steady"); steadyEl = f.el }
+      else steadyEl = null
+    }
     function fitTo(f) {
+      steadyFrame(f)
       if (touring) {
         fitToTour(f)
       } else {
@@ -711,6 +711,7 @@ export default function App() {
       animateView(s, X, Y)
     }
     function fitAll() {
+      steadyFrame(null)
       var mob = innerWidth <= 768
       if (!mob) { fitRect(worldBounds(), 0.82); return }
       // mobile: explicit centering with real insets
@@ -905,20 +906,20 @@ export default function App() {
     // guided tour
     var tourIdx = -1, touring = false
     var tourDef = [
-      { key: "moi.txt", caption: "Bienvenue dans mon fichier" },
-      { key: "apropos.me", caption: "Qui je suis" },
-      { key: "Genogy", caption: "Mon SaaS, design\u00e9 et construit en solo" },
-      { key: "Lexia", caption: "Mon produit que je fonde" },
-      { key: "Skillgrid", caption: "Projet client, design produit" },
-      { key: "Horsenest", caption: "Projet client, design produit" },
-      { key: "Custo", caption: "Projet client, design produit" },
-      { key: "Or\u00e9al", caption: "Grand compte, sous NDA" },
-      { key: "Stellantis", caption: "Grand compte, sous NDA" },
-      { key: "freelance.list", caption: "Ils m'ont fait confiance" },
-      { key: "parcours.list", caption: "Mon parcours" },
-      { key: "m\u00e9thode", caption: "Comment je travaille" },
-      { key: "playground", caption: "Un peu de jeu" },
-      { key: "apropos.me", caption: "Travaillons ensemble" },
+      { key: "moi.txt", i18n: "tour.0" },
+      { key: "apropos.me", i18n: "tour.1" },
+      { key: "Genogy", i18n: "tour.2" },
+      { key: "Lexia", i18n: "tour.3" },
+      { key: "Skillgrid", i18n: "tour.4" },
+      { key: "Horsenest", i18n: "tour.5" },
+      { key: "Custo", i18n: "tour.6" },
+      { key: "Or\u00e9al", i18n: "tour.7" },
+      { key: "Stellantis", i18n: "tour.8" },
+      { key: "freelance.list", i18n: "tour.9" },
+      { key: "parcours.list", i18n: "tour.10" },
+      { key: "m\u00e9thode", i18n: "tour.11" },
+      { key: "playground", i18n: "tour.12" },
+      { key: "apropos.me", i18n: "tour.13" },
     ]
     var tourStops = []
     function buildTourStops() {
@@ -927,7 +928,7 @@ export default function App() {
         var f = frames.filter(function (x) {
           return x.el.querySelector(".flabel").textContent.indexOf(d.key) >= 0
         })[0]
-        if (f) tourStops.push({ frame: f, caption: d.caption })
+        if (f) tourStops.push({ frame: f, i18n: d.i18n })
       })
     }
     var tourOverlay = document.getElementById("tourOverlay")
@@ -966,11 +967,11 @@ export default function App() {
       var stop = tourStops[tourIdx]
       fitTo(stop.frame)
       highlightFrame(stop.frame)
-      tourCaption.textContent = stop.caption
+      tourCaption.textContent = t(stop.i18n)
       tourCounter.textContent = (tourIdx + 1) + " / " + tourStops.length
       tourPrev.style.visibility = tourIdx === 0 ? "hidden" : "visible"
       var isLast = tourIdx === tourStops.length - 1
-      tourNext.textContent = isLast ? "Terminer" : "Suivant"
+      tourNext.textContent = isLast ? t("tour.finish") : t("tour.next")
       // progress bar
       tourProgress.style.width = ((tourIdx + 1) / tourStops.length * 100) + "%"
       // auto mode progress fill animation
@@ -1964,77 +1965,30 @@ export default function App() {
 
     // ===== CHATBOT =====
     var QA = [
-      {
-        k: ["bonjour", "salut", "hello", "coucou", "hey"],
-        a: "Salut ! Moi c'est H\u00e9l\u00e8ne \uD83D\uDC4B Product designer. Pose moi une question sur mon parcours, mes projets ou ma fa\u00e7on de travailler.",
-      },
-      {
-        k: ["qui", "pr\u00e9sente", "presente", "toi", "profil", "parcours"],
-        a: "H\u00e9l\u00e8ne, 34 ans, bas\u00e9e \u00e0 Paris. Product designer senior, en freelance depuis plus de 3 ans\u00a0: UI, UX, design systems et recherche utilisateur. Je con\u00e7ois des produits et je sais aussi les construire avec l\u2019IA, de l\u2019id\u00e9e au MVP. Toujours en qu\u00eate de nouveaux projets et de beaux challenges.",
-      },
-      {
-        k: ["projet", "projets", "travaux", "r\u00e9alisation", "r\u00e9alisations", "portfolio"],
-        a: "Ce que tu vois ici est une s\u00e9lection. Mes produits perso, con\u00e7us et construits en solo\u00a0: Genogy, en ligne, et Lexia, mon SaaS pour avocats, en construction. Des projets clients en design\u00a0: Custo, Horsenest, Skillgrid. Et des missions grand compte chez L\u2019Or\u00e9al et Stellantis. \u00c0 c\u00f4t\u00e9 de \u00e7a, j\u2019ai travaill\u00e9 pour Disneyland Paris, Chanel via Mazarine, Witco, Pulp et MyWay, entre autres. Clique sur les cartes pour le d\u00e9tail, et demande moi les autres si tu veux.",
-      },
-      {
-        k: ["genogy", "g\u00e9nogramme", "genogramme"],
-        a: "Genogy, c'est mon SaaS pour cr\u00e9er des g\u00e9nogrammes cliniques : \u00e9diteur sur canvas, fiches membres, design system. Men\u00e9 seule du concept au produit en ligne, et construit avec l'IA. C'est en ligne sur genogy-app.com.",
-      },
-      {
-        k: ["lexia", "avocat"],
-        a: "Lexia, c'est mon SaaS pour les avocats, que je fonde en solo : marketplace pour trouver un avocat, gestion de cabinet, copilote IA. Je le porte de bout en bout, vision, design et construction avec l'IA. Il est en construction active.",
-      },
-      {
-        k: ["custo", "horsenest", "skillgrid", "client", "clients", "freelance"],
-        a: "En design pur pour des clients : Custo (emballages personnalis\u00e9s), Horsenest (gestion \u00e9questre) et Skillgrid (SaaS RH). Sur chacun j'ai port\u00e9 l'UX, l'UI et le design system, seule en freelance.",
-      },
-      {
-        k: ["or\u00e9al", "loreal", "lor\u00e9al", "stellantis", "disney", "chanel", "grand compte"],
-        a: "J'ai aussi travaill\u00e9 pour des grands comptes : L'Or\u00e9al en R&I (app store interne, design system) et Stellantis (refonte d'une plateforme de gestion financi\u00e8re). Sous NDA, donc je montre le contexte et l'impact, et j'en parle avec plaisir en entretien.",
-      },
-      {
-        k: ["ia", "build", "builder", "construis", "m\u00e9thode", "workflow", "comment tu travailles"],
-        a: "Mon m\u00e9tier, c\u2019est le design produit\u00a0: UX, UI, design systems, recherche. En plus de \u00e7a, je sais construire ce que je con\u00e7ois avec l\u2019IA, jusqu\u2019\u00e0 un MVP cliquable. \u00c7a me permet de tester une id\u00e9e vite, de mieux parler le langage des \u00e9quipes tech, et de collaborer plus facilement avec les devs. Designer avant tout, builder en bonus.",
-      },
-      {
-        k: ["comp\u00e9tence", "comp\u00e9tences", "skills", "expertise", "ce que tu sais faire"],
-        a: "UI, UX, design systems, recherche et tests utilisateurs, prototypage. Une vraie culture tech (formation HETIC, un pass\u00e9 front) qui m'aide \u00e0 parler le langage des \u00e9quipes. Et la capacit\u00e9 \u00e0 construire avec l'IA.",
-      },
-      {
-        k: ["exp\u00e9rience", "cv", "o\u00f9 tu as travaill\u00e9", "entreprises"],
-        a: "J'ai travaill\u00e9 pour L'Or\u00e9al, Stellantis, Disneyland Paris et Chanel via Mazarine, plus pas mal de SaaS et de startups. Toujours du design produit, souvent avec des design systems.",
-      },
-      {
-        k: ["dispo", "disponible", "recrutement", "embauche", "mission", "cdi", "cdd"],
-        a: "Ouverte aux opportunit\u00e9s, CDI, CDD ou freelance. Je suis \u00e0 Paris, en hybride.",
-      },
-      {
-        k: ["contact", "mail", "email", "joindre", "\u00e9crire"],
-        a: "Le plus simple : hln.margary@gmail.com. Tu me trouves aussi sur Malt.",
-      },
-      {
-        k: ["paris", "o\u00f9", "localisation", "ville", "t\u00e9l\u00e9travail", "hybride"],
-        a: "Je suis \u00e0 Paris, en hybride, avec un peu de t\u00e9l\u00e9travail (j'ai un petit chien \u00e0 la maison \uD83D\uDC36).",
-      },
-      {
-        k: ["hobby", "hobbies", "passion", "int\u00e9r\u00eat", "int\u00e9r\u00eats", "en dehors", "perso"],
-        a: "En dehors du design : la cuisine \uD83C\uDF73, les voyages \u2708\uFE0F et l'IA \uD83E\uDD16.",
-      },
-      {
-        k: ["merci", "thanks", "top", "super"],
-        a: "Avec plaisir \uD83D\uDE0A N'h\u00e9site pas si tu as d'autres questions.",
-      },
+      { k: ["bonjour", "salut", "hello", "coucou", "hey", "hi"], i: "chat.a.hello" },
+      { k: ["qui", "pr\u00e9sente", "presente", "toi", "profil", "parcours", "who", "about"], i: "chat.a.who" },
+      { k: ["projet", "projets", "travaux", "r\u00e9alisation", "portfolio", "project", "projects", "work"], i: "chat.a.projects" },
+      { k: ["genogy", "g\u00e9nogramme", "genogramme", "genogram"], i: "chat.a.genogy" },
+      { k: ["lexia", "avocat", "lawyer"], i: "chat.a.lexia" },
+      { k: ["custo", "horsenest", "skillgrid", "client", "clients", "freelance"], i: "chat.a.clients" },
+      { k: ["or\u00e9al", "loreal", "lor\u00e9al", "stellantis", "disney", "chanel", "grand compte", "enterprise"], i: "chat.a.grands" },
+      { k: ["ia", "ai", "build", "builder", "construis", "m\u00e9thode", "workflow", "comment tu travailles", "how you work"], i: "chat.a.ia" },
+      { k: ["comp\u00e9tence", "comp\u00e9tences", "skills", "expertise", "ce que tu sais faire"], i: "chat.a.skills" },
+      { k: ["exp\u00e9rience", "cv", "o\u00f9 tu as travaill\u00e9", "entreprises", "experience"], i: "chat.a.xp" },
+      { k: ["dispo", "disponible", "recrutement", "embauche", "mission", "cdi", "cdd", "available", "hire", "hiring"], i: "chat.a.dispo" },
+      { k: ["contact", "mail", "email", "joindre", "\u00e9crire", "reach"], i: "chat.a.contact" },
+      { k: ["paris", "o\u00f9", "localisation", "ville", "t\u00e9l\u00e9travail", "hybride", "remote", "location"], i: "chat.a.paris" },
+      { k: ["hobby", "hobbies", "passion", "int\u00e9r\u00eat", "int\u00e9r\u00eats", "en dehors", "perso"], i: "chat.a.hobbies" },
+      { k: ["merci", "thanks", "top", "super", "thank"], i: "chat.a.thanks" },
     ]
-    var FALLBACK =
-      "Bonne question ! Je n'ai pas de r\u00e9ponse toute pr\u00eate l\u00e0 dessus. Demande moi plut\u00f4t mon parcours, mes projets, ma fa\u00e7on de travailler avec l'IA, ma dispo, ou comment me contacter."
-    function answer(t) {
-      t = " " + t.toLowerCase() + " "
+    function answer(txt) {
+      txt = " " + txt.toLowerCase() + " "
       for (var i = 0; i < QA.length; i++) {
         for (var j = 0; j < QA[i].k.length; j++) {
-          if (t.indexOf(QA[i].k[j]) >= 0) return QA[i].a
+          if (txt.indexOf(QA[i].k[j]) >= 0) return t(QA[i].i)
         }
       }
-      return FALLBACK
+      return t("chat.fallback")
     }
 
     var panel = $("#chatpanel"),
@@ -2070,10 +2024,7 @@ export default function App() {
       panel.classList.toggle("show", opened)
       btn.classList.toggle("open", opened)
       if (opened && !msgs.childNodes.length) {
-        push(
-          "Salut ! Moi c'est H\u00e9l\u00e8ne \uD83D\uDC4B Product designer. Pose moi une question sur mon parcours, mes projets ou ma fa\u00e7on de travailler.",
-          "bot"
-        )
+        push(t("chat.greeting"), "bot")
       }
       if (opened)
         setTimeout(function () {
@@ -2097,24 +2048,21 @@ export default function App() {
         input.value = ""
       }
     })
-    var CHIPS = [
-      "Qui es tu ?",
-      "Tes projets",
-      "Design et IA",
-      "Tu es dispo ?",
-      "Te contacter",
-    ]
+    var CHIP_KEYS = ["chat.chip1", "chat.chip2", "chat.chip3", "chat.chip4", "chat.chip5"]
     var chipBox = $("#chatchips")
-    chipBox.innerHTML = ""
-    CHIPS.forEach(function (c) {
-      var b = document.createElement("button")
-      b.className = "chip"
-      b.textContent = c
-      b.addEventListener("click", function () {
-        ask(c)
+    function buildChips() {
+      chipBox.innerHTML = ""
+      CHIP_KEYS.forEach(function (key) {
+        var b = document.createElement("button")
+        b.className = "chip"
+        b.textContent = t(key)
+        b.addEventListener("click", function () {
+          ask(t(key))
+        })
+        chipBox.appendChild(b)
       })
-      chipBox.appendChild(b)
-    })
+    }
+    buildChips()
 
     applyView()
 
@@ -2190,15 +2138,15 @@ export default function App() {
 
       // status messages
       var messages = [
-        { t: 0, msg: "j'ouvre le fichier" },
-        { t: 600, msg: "je pose les frames" },
-        { t: 1400, msg: "je r\u00e9veille les curseurs" },
-        { t: 2200, msg: "je branche le lofi" },
-        { t: 2800, msg: "c'est pr\u00eat" },
+        { t: 0, i: "boot.status" },
+        { t: 600, i: "boot.s1" },
+        { t: 1400, i: "boot.s2" },
+        { t: 2200, i: "boot.s3" },
+        { t: 2800, i: "boot.s4" },
       ]
       messages.forEach(function (m) {
         setTimeout(function () {
-          if (statusEl) statusEl.textContent = m.msg
+          if (statusEl) statusEl.textContent = t(m.i)
         }, m.t)
       })
 
@@ -2353,8 +2301,8 @@ export default function App() {
             + '<circle cx="40" cy="40" r="2" fill="var(--acc)" opacity=".6"/>'
             + '</svg>'
             + '<div class="lofi-mid">'
-            + '<div class="lofi-title">Lofi Mushie in a forest</div>'
-            + '<div class="lofi-status">' + (playing ? 'en lecture' : 'en pause') + '</div>'
+            + '<div class="lofi-title">' + t("lofi.title") + '</div>'
+            + '<div class="lofi-status">' + (playing ? t("lofi.pause") : t("lofi.play")) + '</div>'
             + '<div class="lofi-eq">'
             + '<span class="lofi-bar b1"></span>'
             + '<span class="lofi-bar b2"></span>'
@@ -2363,10 +2311,10 @@ export default function App() {
             + '<span class="lofi-bar b5"></span>'
             + '</div>'
             + '</div>'
-            + '<button class="lofi-play" aria-label="' + (playing ? 'Couper le son' : 'Lancer le son') + '">' + playIcon + '</button>'
+            + '<button class="lofi-play" aria-label="' + (playing ? t("lofi.pause") : t("lofi.play")) + '">' + playIcon + '</button>'
             + '</div>'
             // -- context line --
-            + '<div class="lofi-ctx">Pause lofi, le temps de regarder mes projets.</div>'
+            + '<div class="lofi-ctx">' + t("lofi.ctx") + '</div>'
             // -- volume slider (visible only when playing) --
             + (playing
               ? '<div class="lofi-vol"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg><input type="range" min="0" max="100" value="' + Math.round(lofiAudio.volume * 100) + '"></div>'
@@ -2838,7 +2786,7 @@ export default function App() {
         var body = api.body,
           last = -1
         body.innerHTML =
-          '<div class="swr-card"><div class="swr-ctx"><div class="swr-ctx-title">Pause cuisine</div><div class="swr-ctx-sub">Quand je ne design pas, je cuisine. Petit clin d\u2019\u0153il perso\u00a0: pioche une recette au hasard.</div></div><div class="swr-e"></div><div class="swr-n"></div><div class="swr-d"></div><div class="swr-meta"></div><button class="swr-btn">\uD83C\uDFB2 Une autre</button></div>'
+          '<div class="swr-card"><div class="swr-ctx"><div class="swr-ctx-title">' + t("recipe.title") + '</div><div class="swr-ctx-sub">' + t("recipe.sub") + '</div></div><div class="swr-e"></div><div class="swr-n"></div><div class="swr-d"></div><div class="swr-meta"></div><button class="swr-btn">' + t("recipe.btn") + '</button></div>'
         var e = body.querySelector(".swr-e"),
           n = body.querySelector(".swr-n"),
           d = body.querySelector(".swr-d"),
@@ -2875,20 +2823,20 @@ export default function App() {
         b.onclick = fn
         dock.appendChild(b)
       }
-      addBtn("music", "\uD83C\uDFB5", "Lecteur lofi", "music", function () {
-        makeWin("music", "\uD83C\uDFB5", "Lecteur lofi", buildMusic, {
+      addBtn("music", "\uD83C\uDFB5", t("dock.musicTitle"), t("dock.music"), function () {
+        makeWin("music", "\uD83C\uDFB5", t("dock.musicTitle"), buildMusic, {
           w: 300,
           lw: 380,
         })
       })
-      addBtn("tennis", "\uD83C\uDFBE", "Mini tennis", "tennis", function () {
-        makeWin("tennis", "\uD83C\uDFBE", "Mini tennis", buildTennis, {
+      addBtn("tennis", "\uD83C\uDFBE", t("dock.tennisTitle"), t("dock.tennis"), function () {
+        makeWin("tennis", "\uD83C\uDFBE", t("dock.tennisTitle"), buildTennis, {
           w: 380,
           lw: 520,
         })
       })
-      addBtn("reci", "\uD83C\uDF73", "Recettes", "recettes", function () {
-        makeWin("reci", "\uD83C\uDF73", "Recette surprise", buildRecettes, {
+      addBtn("reci", "\uD83C\uDF73", t("dock.recipesTitle"), t("dock.recipes"), function () {
+        makeWin("reci", "\uD83C\uDF73", t("dock.recipesTitle"), buildRecettes, {
           w: 300,
           lw: 360,
         })
@@ -2903,14 +2851,14 @@ export default function App() {
       var fabMenu = document.createElement("div")
       fabMenu.className = "mob-fab-menu"
       var fabItems = [
-        { icon: "🎵", label: "Musique", fn: function () { makeWin("music", "🎵", "Lecteur lofi", buildMusic, { w: 300, lw: 380 }) } },
-        { icon: "🎾", label: "Tennis", fn: function () { makeWin("tennis", "🎾", "Mini tennis", buildTennis, { w: 380, lw: 520 }) } },
-        { icon: "🍳", label: "Recettes", fn: function () { makeWin("reci", "🍳", "Recette surprise", buildRecettes, { w: 300, lw: 360 }) } }
+        { icon: "\uD83C\uDFB5", lkey: "dock.music", fn: function () { makeWin("music", "\uD83C\uDFB5", t("dock.musicTitle"), buildMusic, { w: 300, lw: 380 }) } },
+        { icon: "\uD83C\uDFBE", lkey: "dock.tennis", fn: function () { makeWin("tennis", "\uD83C\uDFBE", t("dock.tennisTitle"), buildTennis, { w: 380, lw: 520 }) } },
+        { icon: "\uD83C\uDF73", lkey: "dock.recipes", fn: function () { makeWin("reci", "\uD83C\uDF73", t("dock.recipesTitle"), buildRecettes, { w: 300, lw: 360 }) } }
       ]
       fabItems.forEach(function (it) {
         var row = document.createElement("button")
         row.className = "mob-fab-item"
-        row.innerHTML = '<span class="mob-fab-ic">' + it.icon + '</span><span>' + it.label + '</span>'
+        row.innerHTML = '<span class="mob-fab-ic">' + it.icon + '</span><span>' + t(it.lkey) + '</span>'
         row.onclick = function () { fabMenu.classList.remove("open"); it.fn() }
         fabMenu.appendChild(row)
       })
@@ -2923,6 +2871,17 @@ export default function App() {
       document.body.appendChild(fab)
       document.body.appendChild(fabMenu)
     })()
+
+    // Language change: rebuild imperative elements
+    var unsubLang = onLangChange(function (l) {
+      setLang(l)
+      updateAllText()
+      buildChips()
+      // update chat input placeholder
+      var ci = document.getElementById("chatin")
+      if (ci) ci.placeholder = t("chat.placeholder")
+    })
+    return function () { unsubLang() }
   }, [])
 
   return (
@@ -2930,12 +2889,12 @@ export default function App() {
       <div id="boot">
         <div className="boot-head">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#999" strokeWidth="1.2"/><rect x="4" y="4" width="4" height="3" rx="1" fill="#999"/><rect x="4" y="9" width="8" height="3" rx="1" fill="#999" opacity=".5"/></svg>
-          <span className="boot-file">portfolio.fig</span>
+          <span className="boot-file">{t("boot.file")}</span>
           <span className="boot-pct" id="bootPct">0%</span>
         </div>
         <div className="boot-canvas" id="bootCanvas"></div>
         <div className="boot-bar"><div className="boot-bar-fill" id="bootBarFill"></div></div>
-        <div className="boot-status" id="bootStatus">j'ouvre le fichier</div>
+        <div className="boot-status" id="bootStatus">{t("boot.status")}</div>
       </div>
 
       <div id="viewport">
@@ -2946,15 +2905,18 @@ export default function App() {
       <div id="bar">
         <img className="meav" id="meav" alt="Hélène Margary" />
         <span className="logo">Hélène Margary</span>
-        <span className="file">· portfolio.fig</span>
+        <span className="file">{t("topbar.file")}</span>
         <span className="sp"></span>
         <div className="avatars" id="avatars"></div>
+        <button className="tbtn lang-toggle" onClick={toggleLang}>
+          {lang === "fr" ? "EN" : "FR"}
+        </button>
         <button className="tbtn solid" id="tourBtn">
-          <span className="tour-full">▶ visite guidée</span>
-          <span className="tour-short">▶ Visite</span>
+          <span className="tour-full">{t("topbar.tourFull")}</span>
+          <span className="tour-short">{t("topbar.tourShort")}</span>
         </button>
         <button className="tbtn" id="fitBtn">
-          ⤢ tout voir
+          {t("topbar.fitAll")}
         </button>
       </div>
 
@@ -2966,7 +2928,7 @@ export default function App() {
         <button id="zin">+</button>
       </div>
       <div id="hintbar">
-        glisse pour te déplacer · molette pour zoomer · clique une frame
+        {t("hint")}
       </div>
 
       <div id="tourVeil" style={{display:"none"}}></div>
@@ -2977,13 +2939,13 @@ export default function App() {
               <div id="tourCaption" className="tour-caption"></div>
               <div id="tourCounter" className="tour-counter"></div>
             </div>
-            <button id="tourQuit" className="tour-close" title="Quitter la visite">{"\u2715"}</button>
+            <button id="tourQuit" className="tour-close" title={t("tour.quit")}>{"\u2715"}</button>
           </div>
           <div className="tour-progress-track"><div id="tourProgress" className="tour-progress-fill"></div></div>
           <div className="tour-actions">
-            <button id="tourPrev" className="tour-btn">{"Pr\u00e9c\u00e9dent"}</button>
-            <button id="tourAuto" className="tour-auto" title="Lecture auto">{"\u25B6"}</button>
-            <button id="tourNext" className="tour-btn tour-btn-primary">{"Suivant"}</button>
+            <button id="tourPrev" className="tour-btn">{t("tour.prev")}</button>
+            <button id="tourAuto" className="tour-auto" title={t("tour.auto")}>{"\u25B6"}</button>
+            <button id="tourNext" className="tour-btn tour-btn-primary">{t("tour.next")}</button>
           </div>
         </div>
       </div>
@@ -2993,8 +2955,8 @@ export default function App() {
         <div className="pm-panel"></div>
       </div>
 
-      <div id="chatbtn" title="Une question ?">
-        <span className="label">Une question ? ✦</span>
+      <div id="chatbtn" title={t("chat.label")}>
+        <span className="label">{t("chat.label")}</span>
         <div id="botface"></div>
       </div>
       <div id="chatpanel">
@@ -3002,10 +2964,10 @@ export default function App() {
           <div id="bothead" className="chathav"></div>
           <div>
             <div className="chatname">
-              Hélène <span className="chatdot"></span>
+              {t("chat.name")} <span className="chatdot"></span>
             </div>
             <div className="chatrole">
-              Product Designer · répond en direct
+              {t("chat.role")}
             </div>
           </div>
           <button id="chatclose" aria-label="Fermer">
@@ -3015,7 +2977,7 @@ export default function App() {
         <div id="chatmsgs"></div>
         <div id="chatchips"></div>
         <div className="chatinput">
-          <input id="chatin" placeholder="Pose ta question…" autoComplete="off" />
+          <input id="chatin" placeholder={t("chat.placeholder")} autoComplete="off" />
           <button id="chatsend" aria-label="Envoyer">
             →
           </button>

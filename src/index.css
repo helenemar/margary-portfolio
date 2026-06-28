@@ -14,12 +14,17 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 #viewport.grabbing{cursor:grabbing}
 #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
 
-.frame{position:absolute;animation:flo 8s ease-in-out infinite}
+.frame{position:absolute;animation:flo var(--fl-dur,6s) ease-in-out var(--fl-del,0s) infinite}
 .frame:not(.frame--clickable){--acc:var(--sel)}
 .flabel::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--acc);margin-right:8px;vertical-align:0px}
-.frame:nth-child(2n){animation-duration:10s;animation-delay:-2s}
-.frame:nth-child(3n){animation-duration:7s;animation-delay:-4s}
-@keyframes flo{0%,100%{translate:0 0}50%{translate:0 -7px}}
+.frame--steady{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.frame{animation:none!important}}
+@keyframes flo{
+  0%,100%{transform:translate(0,0) rotate(0deg)}
+  25%{transform:translate(calc(var(--fl-dx,3px)),calc(var(--fl-dy,-10px) * .6)) rotate(calc(var(--fl-rot,.6deg) * -.5))}
+  50%{transform:translate(calc(var(--fl-dx,3px) * -1),var(--fl-dy,-10px)) rotate(var(--fl-rot,.6deg))}
+  75%{transform:translate(calc(var(--fl-dx,3px) * .5),calc(var(--fl-dy,-10px) * .7)) rotate(calc(var(--fl-rot,.6deg) * -.3))}
+}
 .flabel{position:absolute;top:-24px;left:2px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--muted);white-space:nowrap;letter-spacing:.02em}
 .flabel b{color:var(--text);font-weight:500}
 .fbox{position:absolute;inset:0;border-radius:10px;background:var(--elev);border:1px solid var(--hair);overflow:hidden;
@@ -176,6 +181,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 #bar .file{color:var(--muted)} #bar .sp{flex:1}
 #bar .avatars{display:flex}#bar .avatars .av{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);margin-left:-7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
 .tbtn{display:inline-flex;align-items:center;gap:7px;color:var(--muted);cursor:pointer;border:1px solid transparent;border-radius:999px;padding:5px 11px;transition:.2s}
+.lang-toggle{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.06em;border:1px solid var(--hair);padding:4px 10px}
 .tbtn:hover{color:var(--text);border-color:var(--hair)}.tbtn.solid{background:var(--text);color:var(--bg)}
 .tour-short{display:none}.tour-full{display:inline}
 
@@ -216,6 +222,13 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .pal .sw{display:flex}.pal .sw i{width:11px;height:11px;border-radius:3px;margin-left:-3px;border:1.5px solid var(--surface)}.pal .sw i:first-child{margin-left:0}
 @media(max-width:680px){#hintbar{display:none}.pal span{display:none}}
 @media(max-width:768px){
+.frame{--fl-dy-scale:.6;animation-name:flo-mob}
+@keyframes flo-mob{
+  0%,100%{transform:translate(0,0) rotate(0deg)}
+  25%{transform:translate(calc(var(--fl-dx,2px) * .5),calc(var(--fl-dy,-8px) * .4)) rotate(calc(var(--fl-rot,.4deg) * -.3))}
+  50%{transform:translate(calc(var(--fl-dx,2px) * -.5),calc(var(--fl-dy,-8px) * .6)) rotate(calc(var(--fl-rot,.4deg) * .6))}
+  75%{transform:translate(calc(var(--fl-dx,2px) * .3),calc(var(--fl-dy,-8px) * .45)) rotate(calc(var(--fl-rot,.4deg) * -.2))}
+}
 #bar{gap:8px;padding:0 10px}
 #bar .file{display:none}
 #bar .logo{font-size:13px;white-space:nowrap}
