@@ -112,11 +112,11 @@ export default function App() {
       if (o.proj && PROJECTS[o.proj]) f.style.setProperty("--acc", PROJECTS[o.proj].accent)
       // per-frame float: unique duration, delay, amplitude, rotation
       var seed = frameIdx++ * 2654435761 >>> 0 // hash-like spread
-      var dur = 4 + (seed % 3000) / 1000        // 4s – 7s
-      var del = -((seed >> 12) % 7000) / 1000    // -7s – 0s (negative = pre-offset)
-      var dy  = -(8 + (seed >> 4) % 7)           // -8px – -14px
-      var dx  = 2 + (seed >> 8) % 3              // 2px – 4px
-      var rot = 0.4 + ((seed >> 16) % 7) / 10    // 0.4deg – 1.0deg
+      var dur = 6 + (seed % 4000) / 1000        // 6s – 10s
+      var del = -((seed >> 12) % 10000) / 1000   // -10s – 0s (negative = pre-offset)
+      var dy  = -(4 + (seed >> 4) % 3)           // -4px – -6px
+      var dx  = 1 + (seed >> 8) % 2              // 1px – 2px
+      var rot = 0.3 + ((seed >> 16) % 3) / 10    // 0.3deg – 0.5deg
       f.style.setProperty("--fl-dur", dur.toFixed(2) + "s")
       f.style.setProperty("--fl-del", del.toFixed(2) + "s")
       f.style.setProperty("--fl-dy", dy + "px")
@@ -2908,9 +2908,10 @@ export default function App() {
         <span className="file">{t("topbar.file")}</span>
         <span className="sp"></span>
         <div className="avatars" id="avatars"></div>
-        <button className="tbtn lang-toggle" onClick={toggleLang}>
-          {lang === "fr" ? "EN" : "FR"}
-        </button>
+        <div className="lang-switch">
+          <button className={"lang-opt" + (lang === "fr" ? " active" : "")} onClick={() => { if (lang !== "fr") toggleLang() }}>FR</button>
+          <button className={"lang-opt" + (lang === "en" ? " active" : "")} onClick={() => { if (lang !== "en") toggleLang() }}>EN</button>
+        </div>
         <button className="tbtn solid" id="tourBtn">
           <span className="tour-full">{t("topbar.tourFull")}</span>
           <span className="tour-short">{t("topbar.tourShort")}</span>
