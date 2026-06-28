@@ -114,7 +114,7 @@ export default function App() {
       var seed = frameIdx++ * 2654435761 >>> 0 // hash-like spread
       var dur = 6 + (seed % 4000) / 1000        // 6s – 10s
       var del = -((seed >> 12) % 10000) / 1000   // -10s – 0s
-      var dy  = -(4 + (seed >> 4) % 3)           // -4px – -6px
+      var dy  = -(6 + (seed >> 4) % 4)           // -6px – -9px
       f.style.setProperty("--fl-dur", dur.toFixed(2) + "s")
       f.style.setProperty("--fl-del", del.toFixed(2) + "s")
       f.style.setProperty("--fl-dy", dy + "px")
