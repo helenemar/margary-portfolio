@@ -19,13 +19,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .flabel::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--acc);margin-right:8px;vertical-align:0px}
 .frame--steady{animation-play-state:paused!important}
 @media(prefers-reduced-motion:reduce){.frame{animation:none!important}}
-@keyframes flo{
-  0%,100%{transform:translate(0,0) rotate(0deg)}
-  20%{transform:translate(calc(var(--fl-dx,1px) * .8),calc(var(--fl-dy,-5px) * .5)) rotate(calc(var(--fl-rot,.4deg) * .4))}
-  45%{transform:translate(calc(var(--fl-dx,1px) * -.6),var(--fl-dy,-5px)) rotate(calc(var(--fl-rot,.4deg) * -.6))}
-  65%{transform:translate(calc(var(--fl-dx,1px) * -.3),calc(var(--fl-dy,-5px) * .7)) rotate(var(--fl-rot,.4deg))}
-  85%{transform:translate(calc(var(--fl-dx,1px) * .5),calc(var(--fl-dy,-5px) * .25)) rotate(calc(var(--fl-rot,.4deg) * -.2))}
-}
+@keyframes flo{0%,100%{transform:translateY(0)}50%{transform:translateY(var(--fl-dy,-5px))}}
 .flabel{position:absolute;top:-24px;left:2px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--muted);white-space:nowrap;letter-spacing:.02em}
 .flabel b{color:var(--text);font-weight:500}
 .fbox{position:absolute;inset:0;border-radius:10px;background:var(--elev);border:1px solid var(--hair);overflow:hidden;
@@ -227,13 +221,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 @media(max-width:680px){#hintbar{display:none}.pal span{display:none}}
 @media(max-width:768px){
 .frame{--fl-dy-scale:.6;animation-name:flo-mob}
-@keyframes flo-mob{
-  0%,100%{transform:translate(0,0) rotate(0deg)}
-  20%{transform:translate(calc(var(--fl-dx,1px) * .4),calc(var(--fl-dy,-4px) * .35)) rotate(calc(var(--fl-rot,.3deg) * .3))}
-  45%{transform:translate(calc(var(--fl-dx,1px) * -.3),calc(var(--fl-dy,-4px) * .6)) rotate(calc(var(--fl-rot,.3deg) * -.4))}
-  65%{transform:translate(calc(var(--fl-dx,1px) * -.15),calc(var(--fl-dy,-4px) * .45)) rotate(calc(var(--fl-rot,.3deg) * .5))}
-  85%{transform:translate(calc(var(--fl-dx,1px) * .25),calc(var(--fl-dy,-4px) * .15)) rotate(calc(var(--fl-rot,.3deg) * -.1))}
-}
+@keyframes flo-mob{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--fl-dy,-4px) * .6))}}
 #bar{gap:8px;padding:0 10px}
 #bar .file{display:none}
 #bar .logo{font-size:13px;white-space:nowrap}
